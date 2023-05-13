@@ -19,6 +19,10 @@ pqueue_arrival read_workload(const string& filename) {
             p.arrival = (int)strtol(token, nullptr, 10);
             token = strtok(nullptr, " ");
             p.duration = (int)strtol(token, nullptr, 10);
+            token = strtok(nullptr, " ");
+            p.willingness_to_wait = (int)strtol(token, nullptr, 10);
+            token = strtok(nullptr, " ");
+            p.revenue = (int)strtol(token, nullptr, 10);
             p.first_run = -1;
             p.completion = -1;
             workload.push(p);
@@ -26,7 +30,6 @@ pqueue_arrival read_workload(const string& filename) {
         file.close();
     } else {
         cout << "Error: Unable to open file: " << filename << endl;
-//        exit(1);
     }
     return workload;
 }
@@ -36,7 +39,7 @@ void show_workload(pqueue_arrival workload) {
     cout << "Workload:" << endl;
     while (!xs.empty()) {
         Process p = xs.top();
-        cout << '\t' << p.arrival << ' ' << p.duration << endl;
+        cout << '\t' << p.arrival << ' ' << p.duration << " " << p.willingness_to_wait << " " << p.revenue << endl;
         xs.pop();
     }
 }
@@ -46,7 +49,11 @@ void show_processes(list<Process> processes) {
     cout << "Processes:" << endl;
     while (!xs.empty()) {
         Process p = xs.front();
-        cout << "\tarrival=" << p.arrival << ", duration=" << p.duration << ", first_run=" << p.first_run
+        cout << "\tarrival=" << p.arrival
+             << ", duration=" << p.duration
+             << ", willingness_to_wait=" << p.willingness_to_wait
+             << ", revenue=" << p.revenue
+             << ", first_run=" << p.first_run
              << ", completion=" << p.completion << endl;
         xs.pop_front();
     }
