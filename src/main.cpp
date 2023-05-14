@@ -1,21 +1,27 @@
 #include "fifo.h"
+#include "color.h"
 
 void print_menu(const std::string &workload_filename,const int &num_tables){
-    std::cout<<"*****************************************"<<std::endl;
+    Color::Modifier red(Color::FG_RED);
+    Color::Modifier green(Color::FG_GREEN);
+    Color::Modifier blue(Color::FG_BLUE);
+    Color::Modifier def(Color::FG_DEFAULT);
+    std::cout<< blue << "*****************************************"<<std::endl;
     std::cout<<"*  Welcome to the restaurant simulator  *"<<std::endl;
-    std::cout<<"*****************************************\n"<<std::endl;
+    std::cout<<"*****************************************"<<std::endl;
     std::cout<<" --------------------------------------- "<<std::endl;
     std::cout<<"|   Please select a scheduling policy   |"<<std::endl;
     std::cout<<" --------------------------------------- "<<std::endl;
-    std::cout<<"| 1. First In First Out (FIFO)          |"<<std::endl;
-    // std::cout<<"| 2. Shortest Job First (SJF)           |"<<std::endl;
-    // std::cout<<"| 3. Shortest Time To Completion (SJTC) |"<<std::endl;
-    // std::cout<<"| 4. Round Robin (RR)                   |"<<std::endl;
-    // std::cout<<"| 5. Lottery                            |"<<std::endl;
-    // std::cout<<"| 6. Multi-Level Feedback Queue (MLFQ)  |"<<std::endl;
-    // std::cout<<"| 7. All of the above                   |"<<std::endl;
-    std::cout<<"| 8. Quit                               |"<<std::endl;
+    std::cout<<"|" << green << " 1. First In First Out (FIFO)          " << blue << "|"<<std::endl;
+    std::cout<<"|" << red << " 2. Shortest Job First (SJF)           " << blue << "|"<<std::endl;
+    std::cout<<"|" << red << " 3. Shortest Time To Completion (SJTC) " << blue << "|"<<std::endl;
+    std::cout<<"|" << red << " 4. Round Robin (RR)                   " << blue << "|"<<std::endl;
+    std::cout<<"|" << red << " 5. Lottery                            " << blue << "|"<<std::endl;
+    std::cout<<"|" << red << " 6. Multi-Level Feedback Queue (MLFQ)  " << blue << "|"<<std::endl;
+    std::cout<<"|" << red << " 7. All of the above                   " << blue << "|"<<std::endl;
+    std::cout<<"| " << green << "8. Quit                               " << blue << "|"<<std::endl;
     std::cout<<" ---------------------------------------\n"<<std::endl;
+    std::cout << def;
     std::cout<<"Please enter your choice: ";
 
     int choice;
