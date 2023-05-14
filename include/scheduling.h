@@ -5,8 +5,8 @@
 
 using namespace std;
 
-typedef struct Process Process;
-struct Process {
+typedef struct Customer Customer;
+struct Customer {
   int arrival;
   int first_run;
   int duration;
@@ -17,7 +17,7 @@ struct Process {
 
 class ArrivalComparator {
  public:
-  bool operator()(const Process lhs, const Process rhs) const {
+  bool operator()(const Customer lhs, const Customer rhs) const {
     if (lhs.arrival != rhs.arrival)
       return lhs.arrival > rhs.arrival;
     else
@@ -27,7 +27,7 @@ class ArrivalComparator {
 
 class DurationComparator {
  public:
-  bool operator()(const Process lhs, const Process rhs) const {
+  bool operator()(const Customer lhs, const Customer rhs) const {
     if (lhs.duration != rhs.duration)
       return lhs.duration > rhs.duration;
     else
@@ -37,7 +37,7 @@ class DurationComparator {
 
 class RevenueComparator {
   public:
-    bool operator()(const Process lhs, const Process rhs) const {
+    bool operator()(const Customer lhs, const Customer rhs) const {
       if (lhs.revenue != rhs.revenue)
         return lhs.revenue < rhs.revenue;
       else
@@ -45,24 +45,29 @@ class RevenueComparator {
     }
 };
 
-typedef priority_queue<Process, vector<Process>, ArrivalComparator>
+typedef priority_queue<Customer, vector<Customer>, ArrivalComparator>
     pqueue_arrival;
-typedef priority_queue<Process, vector<Process>, DurationComparator>
+typedef priority_queue<Customer, vector<Customer>, DurationComparator>
     pqueue_duration;
-typedef priority_queue<Process, vector<Process>, RevenueComparator>
+typedef priority_queue<Customer, vector<Customer>, RevenueComparator>
     pqueue_revenue;
 
 pqueue_arrival read_workload(const string& filename);
 void show_workload(pqueue_arrival workload);
-void show_processes(list<Process> processes);
+void show_processes(list<Customer> processes);
 
-list<Process> fifo(const pqueue_arrival& workload);
-list<Process> sjf(const pqueue_arrival& workload);
-list<Process> stcf(const pqueue_arrival& workload);
-list<Process> rr(const pqueue_arrival& workload);
+void fifo(const pqueue_arrival& workload);
+list<Customer> sjf(const pqueue_arrival& workload);
+list<Customer> stcf(const pqueue_arrival& workload);
+list<Customer> rr(const pqueue_arrival& workload);
 
-float avg_turnaround(const list<Process>& processes);
-float avg_response(const list<Process>& processes);
-void show_metrics(const list<Process>& processes);
+double avg_turnaround(const list<Customer>& processes);
+double avg_response(const list<Customer>& processes);
+void show_metrics(pqueue_arrival& workload);
 
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+list<Customer> completed_processes;
+pqueue_arrival workload;
+pthread_mutex_t completed_jobs = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t work_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t time_mutex = PTHREAD_MUTEX_INITIALIZER;
+int time_elapsed = 0;

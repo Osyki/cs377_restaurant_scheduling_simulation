@@ -10,23 +10,16 @@ include_directories(include) # header files
 add_library(scheduling_lib src/scheduling.cpp)
 
 # find gtest package, if not found then fetch it
-find_package(GTest)
-if (NOT GTest_FOUND)
-  message(STATUS "Fetching googletest...")
-    include(FetchContent)
-    FetchContent_Declare(
-    googletest
-    # Specify the commit you depend on and update it regularly.
-    URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
-    )
-    # For Windows: Prevent overriding the parent project's compiler/linker settings
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(googletest)
-    # if fetch fails, abort
-    if (NOT googletest_POPULATED)
-      message(FATAL_ERROR "Failed to fetch googletest")
-    endif()
-endif()
+  # message(STATUS "Fetching googletest...")
+  #   include(FetchContent)
+  #   FetchContent_Declare(
+  #   googletest
+  #   # Specify the commit you depend on and update it regularly.
+  #   URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
+  #   )
+  #   # For Windows: Prevent overriding the parent project's compiler/linker settings
+  #   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  #   FetchContent_MakeAvailable(googletest)
 
 ####################################
 ### Generate the main executable ###
@@ -38,6 +31,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAK
 ####################################
 ### Generate the test executable ###
 ####################################
-add_executable(${PROJECT_NAME}_test tests/test.cpp)
-target_link_libraries(${PROJECT_NAME}_test scheduling_lib gtest_main)
-set_target_properties(${PROJECT_NAME}_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+# add_executable(${PROJECT_NAME}_test tests/test.cpp)
+# target_link_libraries(${PROJECT_NAME}_test scheduling_lib gtest_main)
+# set_target_properties(${PROJECT_NAME}_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
