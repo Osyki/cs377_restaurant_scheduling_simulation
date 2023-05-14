@@ -32,7 +32,7 @@ void SchedulingPolicy::print_metrics()
 {
     join_threads();
     calculate_metrics();
-    std::cout << "Metrics:" << std::endl;
+    std::cout << "\nMetrics:" << std::endl;
     std::cout << "\tJobs Completed:          " << metrics.total_jobs_completed << "\n"
               << "\tTotal Jobs:              " << metrics.total_jobs << "\n"
               << "\tPercent Jobs Completed:  " << (double)metrics.total_jobs_completed / (double)metrics.total_jobs * 100 << "%\n"
@@ -41,7 +41,7 @@ void SchedulingPolicy::print_metrics()
               << "\tRevenue Earned:          " << metrics.revenue_earned << "\n"
               << "\tRevenue Possible:        " << metrics.total_revenue << "\n"
               << "\tPercent Revenue Earned:  " << (double)metrics.revenue_earned / (double)metrics.total_revenue * 100 << "%\n"
-              << "\tTotal time:              " << metrics.time_elapsed << "\n";
+              << "\tTotal time:              " << metrics.time_elapsed << "\n\n";
 }
 
 void SchedulingPolicy::calculate_metrics()

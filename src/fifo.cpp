@@ -10,7 +10,7 @@ FIFO::FIFO(const std::string &filename, const int &num_tables)
     {
         this->threads.emplace_back(&FIFO::run_policy, this);
     }
-    sleep(1); // sleep for 1 second
+    sleep(1); // sleep for 1 second to wait for all threads to initialize
     printf("All threads initialized.. beginning work\n");
     pthread_cond_broadcast(&cond);
 }
@@ -20,7 +20,7 @@ void FIFO::run_policy()
     Metrics thread_metrics;
 
     pthread_mutex_lock(&mutex);
-    std::cout << "Thread " << pthread_self() << ": waiting for condition variable to be true" << std::endl;
+    std::cout << "Thread " << pthread_self() << ": initialized. Waiting for all threads to be ready." << std::endl;
     pthread_cond_wait(&cond, &mutex);
     pthread_mutex_unlock(&mutex); // unlocking for all other threads
 
@@ -71,6 +71,7 @@ void FIFO::run_policy()
         cout_lock.unlock();
         completed_jobs.push_back(p);
         pthread_mutex_unlock(&completed_jobs_mutex); // unlock the thread
+        sleep(1); // short sleep to let other threads run
     }
     pthread_mutex_unlock(&job_queue_mutex);
     return;
