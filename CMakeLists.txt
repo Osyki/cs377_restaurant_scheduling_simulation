@@ -4,10 +4,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra -Wpedantic -Wer
 ##########################
 ### Set up environment ###
 ##########################
-set(PROJECT_NAME lawfirm_scheduling_simulation)
+set(PROJECT_NAME restaurant_simulation)
 project(${PROJECT_NAME})
 include_directories(include) # header files
-add_library(scheduling_lib src/scheduling.cpp)
+add_library(scheduling_lib src/scheduling_policy.cpp src/fifo.cpp)
 
 # find gtest package, if not found then fetch it
   # message(STATUS "Fetching googletest...")
