@@ -5,6 +5,7 @@
 #include "fifo.h"
 #include "sjf.h"
 #include "stcf.h"
+#include "rr.h"
 
 using namespace std;
 
@@ -103,6 +104,39 @@ TEST(HomeworkTest, STCF_workload04) {
   EXPECT_EQ(metrics.avg_turnaround, 10);
   EXPECT_EQ(metrics.avg_response, 5);
 }
+
+TEST(HomeworkTest, RR_workload01) {
+  RR rr("workloads/workload_01.txt", 1);
+  rr.print_metrics();
+  Metrics metrics = rr.get_metrics();
+  EXPECT_EQ(metrics.avg_turnaround, 29);
+  EXPECT_EQ(metrics.avg_response, 1);
+}
+
+TEST(HomeworkTest, RR_workload02) {
+  RR rr("workloads/workload_02.txt", 1);
+  rr.print_metrics();
+  Metrics metrics = rr.get_metrics();
+  EXPECT_EQ(metrics.avg_turnaround, 59);
+  EXPECT_EQ(metrics.avg_response, 1);
+}
+
+TEST(HomeworkTest, RR_workload03) {
+  RR rr("workloads/workload_03.txt", 1);
+  rr.print_metrics();
+  Metrics metrics = rr.get_metrics();
+  EXPECT_NEAR(metrics.avg_turnaround, 59.6, 0.1);
+  EXPECT_EQ(metrics.avg_response, 1);
+}
+
+TEST(HomeworkTest, RR_workload04) {
+  RR rr("workloads/workload_04.txt", 1);
+  rr.print_metrics();
+  Metrics metrics = rr.get_metrics();
+  EXPECT_EQ(metrics.avg_turnaround, 14);
+  EXPECT_EQ(metrics.avg_response, 1);
+}
+
 
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
