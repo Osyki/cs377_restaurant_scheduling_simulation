@@ -1,0 +1,2 @@
+# Restaurant Simulator
+This is a multi-threaded scheduling app disguised as a restaurant simulator. The program takes in a text file containing their arrival time, eating time, time willing to wait for a table, and the revenue they generate. If a customer is not helped in time, they will leave the queue causing the restaurant to lose revenue. The purpose of this program is to see which scheduling policies are best for total revenue generated. The following algorithms are currently supported: FIFO, SJF, and STCF.
