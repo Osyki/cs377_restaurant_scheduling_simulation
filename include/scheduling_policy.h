@@ -3,6 +3,7 @@
 
 #include <list>
 #include <thread>
+#include <mutex>
 #include <iostream>
 #include "customer.h"
 #include "priority_queues.h"

@@ -1,6 +1,7 @@
 #include "scheduling_policy.h"
 #include <iostream>
 #include <fstream>
+#include <string.h>
 
 void SchedulingPolicy::print_jobs()
 {
