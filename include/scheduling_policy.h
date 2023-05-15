@@ -22,7 +22,7 @@ protected:
     Metrics metrics;
     int num_tables;                   // number of threads to run
 
-    pthread_mutex_t job_queue_mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_t queue_mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_t completed_jobs_mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_cond_t cond = PTHREAD_COND_INITIALIZER;

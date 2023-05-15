@@ -1,4 +1,5 @@
 #include "fifo.h"
+#include "sjf.h"
 #include "color.h"
 
 void print_menu(const std::string &workload_filename, const int &num_tables)
@@ -14,7 +15,7 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
     std::cout << "|   Please select a scheduling policy   |" << std::endl;
     std::cout << " --------------------------------------- " << std::endl;
     std::cout << "|" << green << " 1. First In First Out (FIFO)          " << blue << "|" << std::endl;
-    std::cout << "|" << red << " 2. Shortest Job First (SJF)           " << blue << "|" << std::endl;
+    std::cout << "|" << green << " 2. Shortest Job First (SJF)           " << blue << "|" << std::endl;
     std::cout << "|" << red << " 3. Shortest Time To Completion (SJTC) " << blue << "|" << std::endl;
     std::cout << "|" << red << " 4. Round Robin (RR)                   " << blue << "|" << std::endl;
     std::cout << "|" << red << " 5. Lottery                            " << blue << "|" << std::endl;
@@ -39,9 +40,14 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
         fifo.print_metrics();
         break;
     }
-    // case 2:
-    //     std::cout<<"SJF"<<std::endl;
-    //     // break;
+    case 2:
+    {
+        std::cout << "SJF\n"
+                  << std::endl;
+        SJF sjf(workload_filename, num_tables); // threads start running here
+        sjf.print_metrics();
+        break;
+    }
     // case 3:
     //     std::cout<<"SRTF"<<std::endl;
     //     // break;
@@ -57,9 +63,11 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
     // case 7:
     //     std::cout<<"All of the above"<<std::endl;
     //     // break;
-    // case 8:
-    //     std::cout<<"Quit"<<std::endl;
-    //     break;
+    case 8:
+    {
+        std::cout << "Quit" << std::endl;
+        break;
+    }
     default:
         std::cout << "Invalid choice" << std::endl;
         break;
