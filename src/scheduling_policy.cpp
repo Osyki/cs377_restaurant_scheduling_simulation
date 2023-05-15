@@ -21,7 +21,6 @@ void SchedulingPolicy::print_jobs()
 
 void SchedulingPolicy::join_threads()
 {
-    std::cout << "Joining threads.." << std::endl;
     for (auto &t : threads)
     {
         t.join();
@@ -49,6 +48,7 @@ void SchedulingPolicy::calculate_metrics()
     int turnaround = 0;
     int response = 0;
     std::list<Customer> xs = completed_jobs;
+    std::cout << "\n";
     while (!xs.empty())
     {
         Customer p = xs.front();
@@ -56,6 +56,7 @@ void SchedulingPolicy::calculate_metrics()
         turnaround += p.completion - p.arrival;
         response += p.first_run - p.arrival;
         metrics.revenue_earned += p.revenue;
+        metrics.time_elapsed = std::max(metrics.time_elapsed, p.completion);
     }
     pqueue_arrival ys = job_queue;
     while (!ys.empty())
@@ -67,7 +68,7 @@ void SchedulingPolicy::calculate_metrics()
     metrics.total_jobs = job_queue.size();
     metrics.total_jobs_completed = completed_jobs.size();
     metrics.avg_turnaround = (double)turnaround / (double)completed_jobs.size();
-    metrics.avg_turnaround = (double)response / (double)completed_jobs.size();
+    metrics.avg_response = (double)response / (double)completed_jobs.size();
 }
 
 void SchedulingPolicy::read_workload(const std::string &filename)

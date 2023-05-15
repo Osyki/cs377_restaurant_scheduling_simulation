@@ -1,69 +1,75 @@
 #include "fifo.h"
 #include "color.h"
 
-void print_menu(const std::string &workload_filename,const int &num_tables){
+void print_menu(const std::string &workload_filename, const int &num_tables)
+{
     Color::Modifier red(Color::FG_RED);
     Color::Modifier green(Color::FG_GREEN);
     Color::Modifier blue(Color::FG_BLUE);
     Color::Modifier def(Color::FG_DEFAULT);
-    std::cout<< blue << "*****************************************"<<std::endl;
-    std::cout<<"*  Welcome to the restaurant simulator  *"<<std::endl;
-    std::cout<<"*****************************************"<<std::endl;
-    std::cout<<" --------------------------------------- "<<std::endl;
-    std::cout<<"|   Please select a scheduling policy   |"<<std::endl;
-    std::cout<<" --------------------------------------- "<<std::endl;
-    std::cout<<"|" << green << " 1. First In First Out (FIFO)          " << blue << "|"<<std::endl;
-    std::cout<<"|" << red << " 2. Shortest Job First (SJF)           " << blue << "|"<<std::endl;
-    std::cout<<"|" << red << " 3. Shortest Time To Completion (SJTC) " << blue << "|"<<std::endl;
-    std::cout<<"|" << red << " 4. Round Robin (RR)                   " << blue << "|"<<std::endl;
-    std::cout<<"|" << red << " 5. Lottery                            " << blue << "|"<<std::endl;
-    std::cout<<"|" << red << " 6. Multi-Level Feedback Queue (MLFQ)  " << blue << "|"<<std::endl;
-    std::cout<<"|" << red << " 7. All of the above                   " << blue << "|"<<std::endl;
-    std::cout<<"| " << green << "8. Quit                               " << blue << "|"<<std::endl;
-    std::cout<<" ---------------------------------------\n"<<std::endl;
+    std::cout << blue << "*****************************************" << std::endl;
+    std::cout << "*  Welcome to the restaurant simulator  *" << std::endl;
+    std::cout << "*****************************************" << std::endl;
+    std::cout << " --------------------------------------- " << std::endl;
+    std::cout << "|   Please select a scheduling policy   |" << std::endl;
+    std::cout << " --------------------------------------- " << std::endl;
+    std::cout << "|" << green << " 1. First In First Out (FIFO)          " << blue << "|" << std::endl;
+    std::cout << "|" << red << " 2. Shortest Job First (SJF)           " << blue << "|" << std::endl;
+    std::cout << "|" << red << " 3. Shortest Time To Completion (SJTC) " << blue << "|" << std::endl;
+    std::cout << "|" << red << " 4. Round Robin (RR)                   " << blue << "|" << std::endl;
+    std::cout << "|" << red << " 5. Lottery                            " << blue << "|" << std::endl;
+    std::cout << "|" << red << " 6. Multi-Level Feedback Queue (MLFQ)  " << blue << "|" << std::endl;
+    std::cout << "|" << red << " 7. All of the above                   " << blue << "|" << std::endl;
+    std::cout << "| " << green << "8. Quit                               " << blue << "|" << std::endl;
+    std::cout << " ---------------------------------------\n"
+              << std::endl;
     std::cout << def;
-    std::cout<<"Please enter your choice: ";
+    std::cout << "Please enter your choice: ";
 
     int choice;
-    std::cin>>choice;
+    std::cin >> choice;
     std::cout << "\nSelected ";
-    switch(choice){
-        case 1: {
-            std::cout<<"FIFO\n"<<std::endl;
-            FIFO fifo(workload_filename, num_tables); // threads start running here
-            fifo.print_metrics();
-            break;
-        }
-        // case 2:
-        //     std::cout<<"SJF"<<std::endl;
-        //     // break;
-        // case 3:
-        //     std::cout<<"SRTF"<<std::endl;
-        //     // break;
-        // case 4:
-        //     std::cout<<"RR"<<std::endl;
-        //     // break;
-        // case 5:
-        //     std::cout<<"Lottery"<<std::endl;
-        //     // break;
-        // case 6:
-        //     std::cout<<"MLFQ"<<std::endl;
-        //     // break;
-        // case 7:
-        //     std::cout<<"All of the above"<<std::endl;
-        //     // break;
-        // case 8:
-        //     std::cout<<"Quit"<<std::endl;
-        //     break;
-        default:
-            std::cout<<"Invalid choice"<<std::endl;
-            break;
+    switch (choice)
+    {
+    case 1:
+    {
+        std::cout << "FIFO\n"
+                  << std::endl;
+        FIFO fifo(workload_filename, num_tables); // threads start running here
+        fifo.print_metrics();
+        break;
+    }
+    // case 2:
+    //     std::cout<<"SJF"<<std::endl;
+    //     // break;
+    // case 3:
+    //     std::cout<<"SRTF"<<std::endl;
+    //     // break;
+    // case 4:
+    //     std::cout<<"RR"<<std::endl;
+    //     // break;
+    // case 5:
+    //     std::cout<<"Lottery"<<std::endl;
+    //     // break;
+    // case 6:
+    //     std::cout<<"MLFQ"<<std::endl;
+    //     // break;
+    // case 7:
+    //     std::cout<<"All of the above"<<std::endl;
+    //     // break;
+    // case 8:
+    //     std::cout<<"Quit"<<std::endl;
+    //     break;
+    default:
+        std::cout << "Invalid choice" << std::endl;
+        break;
     }
 }
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3) {
+    if (argc != 3)
+    {
         std::cout << "Usage: ./restaurant_simulation <workload file> <num_tables>" << std::endl;
         return 1;
     }
