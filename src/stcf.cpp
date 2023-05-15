@@ -29,26 +29,41 @@ void STCF::run_policy()
     pthread_mutex_lock(&queue_mutex);
     while (!xs.empty() || !ys.empty())
     {
-        // continue popping customers until the current time is less than their arrival time + willingness to wait
+        pthread_mutex_unlock(&queue_mutex); // unlock the thread
+
+        pthread_mutex_lock(&queue_mutex);
         while (!xs.empty() && xs.top().arrival + xs.top().willingness_to_wait <= thread_metrics.time_elapsed)
         {
             cout_lock.lock();
             std::cout << "Thread " << pthread_self() << ": dropping customer " << xs.top().arrival << " at time " << thread_metrics.time_elapsed << std::endl;
             cout_lock.unlock();
             xs.pop();
+            pthread_mutex_unlock(&queue_mutex);
+            if (num_tables > 1)
+                sleep(1);
+            pthread_mutex_lock(&queue_mutex);
         }
-        // continue popping customers until the current time is less than their arrival time + willingness to wait
-        while (!ys.empty() && ys.top().arrival + ys.top().willingness_to_wait < thread_metrics.time_elapsed)
+        pthread_mutex_unlock(&queue_mutex);
+
+        pthread_mutex_lock(&queue_mutex);
+        while (!ys.empty() && ys.top().arrival + ys.top().willingness_to_wait <= thread_metrics.time_elapsed)
         {
             cout_lock.lock();
             std::cout << "Thread " << pthread_self() << ": dropping customer " << ys.top().arrival << " at time " << thread_metrics.time_elapsed << std::endl;
             cout_lock.unlock();
             ys.pop();
+            pthread_mutex_unlock(&queue_mutex);
+            if (num_tables > 1)
+                sleep(1);
+            pthread_mutex_lock(&queue_mutex);
         }
+        pthread_mutex_unlock(&queue_mutex);
+
+
         // if the queues are empty after dropping customers, break out of the loop
+        pthread_mutex_lock(&queue_mutex);
         if (xs.empty() && ys.empty())
         {
-            pthread_mutex_unlock(&queue_mutex); // unlock the thread
             break;
         }
 
@@ -56,11 +71,17 @@ void STCF::run_policy()
         {
             ys.push(xs.top());
             xs.pop();
+            pthread_mutex_unlock(&queue_mutex);
+            if (num_tables > 1)
+                sleep(1);
+            pthread_mutex_lock(&queue_mutex);
         }
+
         // if there are no processes to run, wait until the next one arrives
         if (ys.empty())
         {
             thread_metrics.time_elapsed = xs.top().arrival;
+            break;
         }
         // run the shortest process
         Customer p = ys.top();
@@ -84,7 +105,8 @@ void STCF::run_policy()
             pthread_mutex_lock(&queue_mutex);
             ys.push(p);
             pthread_mutex_unlock(&queue_mutex);
-        }
+        } 
+        pthread_mutex_lock(&queue_mutex);
     }
     pthread_mutex_unlock(&queue_mutex); // unlock the thread
     return;

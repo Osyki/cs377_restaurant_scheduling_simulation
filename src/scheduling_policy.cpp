@@ -3,6 +3,21 @@
 #include <fstream>
 #include <string.h>
 
+SchedulingPolicy::SchedulingPolicy() {
+    this->queue_mutex = PTHREAD_MUTEX_INITIALIZER;
+    this->completed_jobs_mutex = PTHREAD_MUTEX_INITIALIZER;
+    this->mutex = PTHREAD_MUTEX_INITIALIZER;
+    this->cond = PTHREAD_COND_INITIALIZER;
+}
+
+SchedulingPolicy::~SchedulingPolicy()
+{
+    pthread_mutex_destroy(&queue_mutex);
+    pthread_mutex_destroy(&completed_jobs_mutex);
+    pthread_mutex_destroy(&mutex);
+    pthread_cond_destroy(&cond);
+}
+
 void SchedulingPolicy::print_jobs()
 {
     pqueue_arrival xs = job_queue;

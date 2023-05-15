@@ -12,8 +12,8 @@
 class SchedulingPolicy
 {
 public:
-    SchedulingPolicy() {}; // set up job queue and read workload
-    ~SchedulingPolicy() {};
+    SchedulingPolicy(); // set up job queue and read workload
+    ~SchedulingPolicy();
     virtual void run_policy() = 0;                                 // specific algorithm implementation for each policy
     void print_jobs();
     void print_metrics();
@@ -25,10 +25,10 @@ protected:
     Metrics metrics;
     int num_tables;                   // number of threads to run
 
-    pthread_mutex_t queue_mutex = PTHREAD_MUTEX_INITIALIZER;
-    pthread_mutex_t completed_jobs_mutex = PTHREAD_MUTEX_INITIALIZER;
-    pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+    pthread_mutex_t queue_mutex;
+    pthread_mutex_t completed_jobs_mutex;
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
 
     std::mutex cout_lock{};
 
