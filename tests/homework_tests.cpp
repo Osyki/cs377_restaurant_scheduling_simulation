@@ -4,6 +4,7 @@
 #include <string>
 #include "fifo.h"
 #include "sjf.h"
+#include "stcf.h"
 
 using namespace std;
 
@@ -59,14 +60,46 @@ TEST(HomeworkTest, SJF_workload03) {
   SJF sjf("workloads/workload_03.txt", 1);
   sjf.print_metrics();
   Metrics metrics = sjf.get_metrics();
-  EXPECT_NEAR(metrics.avg_response, 63.3, 0.1);
   EXPECT_NEAR(metrics.avg_turnaround, 103.3, 0.1);
+  EXPECT_NEAR(metrics.avg_response, 63.3, 0.1);
 }
 
 TEST(HomeworkTest, SJF_workload04) {
   SJF sjf("workloads/workload_04.txt", 1);
   sjf.print_metrics();
   Metrics metrics = sjf.get_metrics();
+  EXPECT_EQ(metrics.avg_turnaround, 10);
+  EXPECT_EQ(metrics.avg_response, 5);
+}
+
+TEST(HomeworkTest, STCF_workload01) {
+  STCF stcf("workloads/workload_01.txt", 1);
+  stcf.print_metrics();
+  Metrics metrics = stcf.get_metrics();
+  EXPECT_EQ(metrics.avg_turnaround, 20);
+  EXPECT_EQ(metrics.avg_response, 10);
+}
+
+TEST(HomeworkTest, STCF_workload02) {
+  STCF stcf("workloads/workload_02.txt", 1);
+  stcf.print_metrics();
+  Metrics metrics = stcf.get_metrics();
+  EXPECT_EQ(metrics.avg_turnaround, 50);
+  EXPECT_EQ(metrics.avg_response, 10);
+}
+
+TEST(HomeworkTest, STCF_workload03) {
+  STCF stcf("workloads/workload_03.txt", 1);
+  stcf.print_metrics();
+  Metrics metrics = stcf.get_metrics();
+  EXPECT_EQ(metrics.avg_turnaround, 50);
+  EXPECT_NEAR(metrics.avg_response, 3.3, 0.1);
+}
+
+TEST(HomeworkTest, STCF_workload04) {
+  STCF stcf("workloads/workload_04.txt", 1);
+  stcf.print_metrics();
+  Metrics metrics = stcf.get_metrics();
   EXPECT_EQ(metrics.avg_turnaround, 10);
   EXPECT_EQ(metrics.avg_response, 5);
 }

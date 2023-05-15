@@ -1,6 +1,7 @@
+#include "color.h"
 #include "fifo.h"
 #include "sjf.h"
-#include "color.h"
+#include "stcf.h"
 
 void print_menu(const std::string &workload_filename, const int &num_tables)
 {
@@ -21,7 +22,7 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
     std::cout << "|" << green 
               << " 2. Shortest Job First (SJF)                 " 
               << blue << "|" << std::endl;
-    std::cout << "|" << red 
+    std::cout << "|" << green 
               << " 3. Shortest Time To Completion First (STCF) " 
               << blue << "|" << std::endl;
     std::cout << "|" << red 
@@ -65,9 +66,14 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
         sjf.print_metrics();
         break;
     }
-    // case 3:
-    //     std::cout<<"STCF"<<std::endl;
-    //     // break;
+    case 3: // STCF
+    {
+        std::cout << "STCF\n"
+                  << std::endl;
+        STCF stcf(workload_filename, num_tables); // threads start running here
+        stcf.print_metrics();
+        break;
+    }
     // case 4:
     //     std::cout<<"RR"<<std::endl;
     //     // break;
