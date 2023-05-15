@@ -7,6 +7,7 @@ class SJF : public SchedulingPolicy
 {
 public:
     SJF(const std::string &filename, const int &num_tables);
+    ~SJF(){};
     void run_policy();
 
 private:

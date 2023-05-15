@@ -100,3 +100,8 @@ void SchedulingPolicy::read_workload(const std::string &filename)
         std::cout << "Error: Unable to open file: " << filename << std::endl;
     }
 }
+
+Metrics SchedulingPolicy::get_metrics()
+{
+    return metrics;
+}

@@ -77,7 +77,7 @@ void FIFO::run_policy()
         cout_lock.unlock();
         completed_jobs.push_back(p);
         pthread_mutex_unlock(&completed_jobs_mutex); // unlock the thread
-        sleep(1);                                    // short sleep to let other threads run
+        // sleep(1);                                    // short sleep to let other threads run
     }
     pthread_mutex_unlock(&queue_mutex);
     return;

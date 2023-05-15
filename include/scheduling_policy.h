@@ -13,9 +13,11 @@ class SchedulingPolicy
 {
 public:
     SchedulingPolicy() {}; // set up job queue and read workload
+    ~SchedulingPolicy() {};
     virtual void run_policy() = 0;                                 // specific algorithm implementation for each policy
     void print_jobs();
     void print_metrics();
+    Metrics get_metrics();
 
 protected:
     std::list<Customer> completed_jobs;

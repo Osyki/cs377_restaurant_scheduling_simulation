@@ -7,6 +7,7 @@ class FIFO : public SchedulingPolicy
 {
 public:
     FIFO(const std::string &filename, const int &num_tables);
+    ~FIFO(){};
     void run_policy();
 
 private:
