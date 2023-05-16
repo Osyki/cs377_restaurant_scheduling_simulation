@@ -2,6 +2,10 @@
 #define COLOR_H
 
 #include <ostream>
+
+/**
+ * Color codes for printing to terminal.
+ */
 namespace Color {
     enum Code {
         FG_RED      = 31,

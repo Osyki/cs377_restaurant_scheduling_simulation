@@ -4,6 +4,9 @@
 #include <queue>
 #include "customer.h"
 
+/**
+ * Sorts customers by arrival time.
+*/
 class ArrivalComparator {
  public:
   bool operator()(const Customer lhs, const Customer rhs) const {
@@ -14,6 +17,9 @@ class ArrivalComparator {
   }
 };
 
+/**
+ * Sorts customers by duration.
+*/
 class DurationComparator {
  public:
   bool operator()(const Customer lhs, const Customer rhs) const {
@@ -24,6 +30,9 @@ class DurationComparator {
   }
 };
 
+/**
+ * Sorts customers by revenue.
+*/
 class RevenueComparator {
   public:
     bool operator()(const Customer lhs, const Customer rhs) const {

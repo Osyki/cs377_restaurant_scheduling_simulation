@@ -3,6 +3,9 @@
 
 #include "scheduling_policy.h"
 
+/**
+ * Lottery scheduling policy.
+*/
 class Lottery : public SchedulingPolicy
 {
 public:

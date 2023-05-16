@@ -3,6 +3,9 @@
 
 #include "scheduling_policy.h"
 
+/**
+ * Shortest job first scheduling policy.
+ */
 class SJF : public SchedulingPolicy
 {
 public:

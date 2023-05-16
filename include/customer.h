@@ -4,6 +4,9 @@
 #include <queue>
 #include <vector>
 
+/**
+ * Struct to represent a customer.
+*/
 struct Customer {
   int arrival;
   int first_run;

@@ -3,6 +3,9 @@
 
 #include "scheduling_policy.h"
 
+/**
+ * Multi-level feedback queue scheduling policy.
+ */
 class MLFQ : public SchedulingPolicy
 {
 public:

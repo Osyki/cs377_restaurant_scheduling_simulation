@@ -3,6 +3,9 @@
 
 #include "scheduling_policy.h"
 
+/**
+ * Shortest time-to-completion first scheduling policy.
+ */
 class STCF : public SchedulingPolicy
 {
 public:

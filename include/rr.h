@@ -3,6 +3,9 @@
 
 #include "scheduling_policy.h"
 
+/**
+ * Round robin scheduling policy.
+ */
 class RR : public SchedulingPolicy
 {
 public:

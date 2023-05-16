@@ -1,6 +1,9 @@
 #ifndef METRICS_H
 #define METRICS_H
 
+/**
+ * Struct to represent metrics.
+*/
 struct Metrics {
     int revenue_earned = 0;
     int total_revenue = 0;

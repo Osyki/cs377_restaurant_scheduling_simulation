@@ -3,6 +3,9 @@
 
 #include "scheduling_policy.h"
 
+/**
+ * First in, first out scheduling policy.
+ */
 class FIFO : public SchedulingPolicy
 {
 public:

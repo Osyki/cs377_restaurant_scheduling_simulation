@@ -9,6 +9,9 @@
 #include "priority_queues.h"
 #include "metrics.h"
 
+/**
+ * Abstract class for scheduling policies.
+ */
 class SchedulingPolicy
 {
 public:
