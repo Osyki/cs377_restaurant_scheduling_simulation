@@ -9,7 +9,7 @@ SchedulingPolicy::SchedulingPolicy() {
     this->time_mutex = PTHREAD_MUTEX_INITIALIZER;
     this->mutex = PTHREAD_MUTEX_INITIALIZER;
     this->cond = PTHREAD_COND_INITIALIZER;
-    time = 0;
+    time_elapsed = 0;
 }
 
 SchedulingPolicy::~SchedulingPolicy()
@@ -59,7 +59,7 @@ void SchedulingPolicy::print_metrics()
               << "\tRevenue Earned:          " << metrics.revenue_earned << "\n"
               << "\tRevenue Possible:        " << metrics.total_revenue << "\n"
               << "\tPercent Revenue Earned:  " << (double)metrics.revenue_earned / (double)metrics.total_revenue * 100 << "%\n"
-              << "\tTotal time:              " << time << "\n\n";
+              << "\tTotal time:              " << time_elapsed << "\n\n";
 }
 
 void SchedulingPolicy::calculate_metrics()
@@ -75,7 +75,7 @@ void SchedulingPolicy::calculate_metrics()
         turnaround += p.completion - p.arrival;
         response += p.first_run - p.arrival;
         metrics.revenue_earned += p.revenue;
-        metrics.time_elapsed = std::max(metrics.time_elapsed, p.completion);
+        // metrics.time_elapsed = std::max(metrics.time_elapsed, p.completion);
     }
     pqueue_arrival ys = job_queue;
     while (!ys.empty())

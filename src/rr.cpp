@@ -34,18 +34,19 @@ void RR::run_policy()
         pthread_mutex_unlock(&queue_mutex); // unlock the thread
 
         pthread_mutex_lock(&queue_mutex);
-        while (!xs.empty() && xs.top().arrival + xs.top().willingness_to_wait <= time)
+        pthread_mutex_lock(&time_mutex);
+        while (!xs.empty() && xs.top().arrival + xs.top().willingness_to_wait <= time_elapsed)
         {
-            cout_lock.lock();
-            std::cout << "Thread " << pthread_self() << ": dropping customer " << xs.top().arrival << " at time " << time << std::endl;
-            cout_lock.unlock();
+            pthread_mutex_unlock(&time_mutex);
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
             if (num_tables > 1)
                 sleep(1);
             pthread_mutex_lock(&queue_mutex);
+            pthread_mutex_lock(&time_mutex);
         }
         pthread_mutex_unlock(&queue_mutex);
+        pthread_mutex_unlock(&time_mutex);
 
         // if the queues are empty after dropping customers, break out of the loop
         pthread_mutex_lock(&queue_mutex);
@@ -55,8 +56,10 @@ void RR::run_policy()
         }
 
         // add all processes that have arrived
-        while (!xs.empty() && xs.top().arrival <= time)
+        pthread_mutex_lock(&time_mutex);
+        while (!xs.empty() && xs.top().arrival <= time_elapsed)
         {
+            pthread_mutex_unlock(&time_mutex);
             Customer p = xs.top();
             ys.push(p);
             xs.pop();
@@ -64,12 +67,16 @@ void RR::run_policy()
             if (num_tables > 1)
                 sleep(1);
             pthread_mutex_lock(&queue_mutex);
+            pthread_mutex_lock(&time_mutex);
         }
+        pthread_mutex_unlock(&time_mutex);
 
         // if there are no processes to run, wait until the next one arrives
         if (ys.empty())
         {
-            time = xs.top().arrival;
+            pthread_mutex_lock(&time_mutex);
+            time_elapsed = xs.top().arrival;
+            pthread_mutex_unlock(&time_mutex);
         }
         // run the next process
         Customer p = ys.front();
@@ -79,13 +86,13 @@ void RR::run_policy()
         pthread_mutex_lock(&time_mutex);
         if (p.first_run == -1)
         {
-            p.first_run = time;
+            p.first_run = time_elapsed;
         }
-        time += 1;
+        time_elapsed += 1;
         p.duration -= 1;
         if (p.duration == 0)
         {
-            p.completion = time;
+            p.completion = time_elapsed;
             pthread_mutex_unlock(&time_mutex);
             pthread_mutex_lock(&completed_jobs_mutex);
             completed_jobs.push_back(p);
@@ -98,6 +105,8 @@ void RR::run_policy()
             ys.push(p);
             pthread_mutex_unlock(&queue_mutex);
         }
+        if (num_tables > 1)
+            sleep(1);  
         pthread_mutex_lock(&queue_mutex);
     }
     pthread_mutex_unlock(&queue_mutex);

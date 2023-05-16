@@ -2,7 +2,6 @@
 #define METRICS_H
 
 struct Metrics {
-    int time_elapsed = 0;
     int revenue_earned = 0;
     int total_revenue = 0;
     int total_jobs = 0;

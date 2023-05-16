@@ -33,7 +33,7 @@ protected:
 
     std::mutex cout_lock{};
 
-    int time;
+    int time_elapsed;
 
     void read_workload(const std::string &filename);
     pqueue_arrival get_job_queue() { return job_queue; };

@@ -3,6 +3,7 @@
 #include "sjf.h"
 #include "stcf.h"
 #include "rr.h"
+#include "lottery.h"
 
 void print_menu(const std::string &workload_filename, const int &num_tables)
 {
@@ -29,7 +30,7 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
     std::cout << "|" << green 
               << " 4. Round Robin (RR)                         " 
               << blue << "|" << std::endl;
-    std::cout << "|" << red 
+    std::cout << "|" << green 
               << " 5. Lottery                                  " 
               << blue << "|" << std::endl;
     std::cout << "|" << red 
@@ -83,9 +84,14 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
         rr.print_metrics();
         break;
     }
-    // case 5:
-    //     std::cout<<"Lottery"<<std::endl;
-    //     // break;
+    case 5:
+    {
+        std::cout << "Lottery\n"
+                  << std::endl;
+        Lottery lottery(workload_filename, num_tables); // threads start running here
+        lottery.print_metrics();
+        break;
+    }
     // case 6:
     //     std::cout<<"MLFQ"<<std::endl;
     //     // break;

@@ -36,18 +36,19 @@ void FIFO::run_policy()
          */
         // continue popping customers until the current time is less than their arrival time + willingness to wait
         pthread_mutex_lock(&queue_mutex);
-        while (!xs.empty() && xs.top().arrival + xs.top().willingness_to_wait <= time)
+        pthread_mutex_lock(&time_mutex);
+        while (!xs.empty() && xs.top().arrival + xs.top().willingness_to_wait <= time_elapsed)
         {
-            cout_lock.lock();
-            std::cout << "Thread " << pthread_self() << ": dropping customer " << xs.top().arrival << " at time " << time << std::endl;
-            cout_lock.unlock();
+            pthread_mutex_unlock(&time_mutex);
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
             if (num_tables > 1)
                 sleep(1);
             pthread_mutex_lock(&queue_mutex);
+            pthread_mutex_lock(&time_mutex);
         }
         pthread_mutex_unlock(&queue_mutex);
+        pthread_mutex_unlock(&time_mutex);
 
         // if the queue is empty after dropping customers, break out of the loop
         pthread_mutex_lock(&queue_mutex);
@@ -63,22 +64,19 @@ void FIFO::run_policy()
          * Update metrics
          */
         pthread_mutex_lock(&time_mutex);
-        if (time < p.arrival)
+        if (time_elapsed < p.arrival)
         {
-            time = p.arrival;
+            time_elapsed = p.arrival;
         }
-        p.first_run = time;
-        time += p.duration;
-        p.completion = time;
+        p.first_run = time_elapsed;
+        time_elapsed += p.duration;
+        p.completion = time_elapsed;
         pthread_mutex_unlock(&time_mutex);
 
         /**
          * Update completed jobs
          */
         pthread_mutex_lock(&completed_jobs_mutex); // lock the thread
-        cout_lock.lock();
-        std::cout << "Thread " << pthread_self() << ": completing customer " << p.arrival << " at time " << p.completion << std::endl;
-        cout_lock.unlock();
         completed_jobs.push_back(p);
         pthread_mutex_unlock(&completed_jobs_mutex); // unlock the thread
         if (num_tables > 1)
