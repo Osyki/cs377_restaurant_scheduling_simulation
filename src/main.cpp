@@ -2,6 +2,7 @@
 #include "fifo.h"
 #include "sjf.h"
 #include "stcf.h"
+#include "rr.h"
 
 void print_menu(const std::string &workload_filename, const int &num_tables)
 {
@@ -25,7 +26,7 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
     std::cout << "|" << green 
               << " 3. Shortest Time To Completion First (STCF) " 
               << blue << "|" << std::endl;
-    std::cout << "|" << red 
+    std::cout << "|" << green 
               << " 4. Round Robin (RR)                         " 
               << blue << "|" << std::endl;
     std::cout << "|" << red 
@@ -74,9 +75,14 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
         stcf.print_metrics();
         break;
     }
-    // case 4:
-    //     std::cout<<"RR"<<std::endl;
-    //     // break;
+    case 4:
+    {
+        std::cout << "RR\n"
+                  << std::endl;
+        RR rr(workload_filename, num_tables); // threads start running here
+        rr.print_metrics();
+        break;
+    }
     // case 5:
     //     std::cout<<"Lottery"<<std::endl;
     //     // break;
