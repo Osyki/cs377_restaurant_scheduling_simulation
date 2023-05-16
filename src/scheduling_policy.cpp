@@ -6,14 +6,17 @@
 SchedulingPolicy::SchedulingPolicy() {
     this->queue_mutex = PTHREAD_MUTEX_INITIALIZER;
     this->completed_jobs_mutex = PTHREAD_MUTEX_INITIALIZER;
+    this->time_mutex = PTHREAD_MUTEX_INITIALIZER;
     this->mutex = PTHREAD_MUTEX_INITIALIZER;
     this->cond = PTHREAD_COND_INITIALIZER;
+    time = 0;
 }
 
 SchedulingPolicy::~SchedulingPolicy()
 {
     pthread_mutex_destroy(&queue_mutex);
     pthread_mutex_destroy(&completed_jobs_mutex);
+    pthread_mutex_destroy(&time_mutex);
     pthread_mutex_destroy(&mutex);
     pthread_cond_destroy(&cond);
 }
@@ -56,7 +59,7 @@ void SchedulingPolicy::print_metrics()
               << "\tRevenue Earned:          " << metrics.revenue_earned << "\n"
               << "\tRevenue Possible:        " << metrics.total_revenue << "\n"
               << "\tPercent Revenue Earned:  " << (double)metrics.revenue_earned / (double)metrics.total_revenue * 100 << "%\n"
-              << "\tTotal time:              " << metrics.time_elapsed << "\n\n";
+              << "\tTotal time:              " << time << "\n\n";
 }
 
 void SchedulingPolicy::calculate_metrics()

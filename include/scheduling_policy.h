@@ -27,10 +27,13 @@ protected:
 
     pthread_mutex_t queue_mutex;
     pthread_mutex_t completed_jobs_mutex;
+    pthread_mutex_t time_mutex;
     pthread_mutex_t mutex;
     pthread_cond_t cond;
 
     std::mutex cout_lock{};
+
+    int time;
 
     void read_workload(const std::string &filename);
     pqueue_arrival get_job_queue() { return job_queue; };

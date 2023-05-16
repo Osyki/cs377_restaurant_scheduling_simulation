@@ -29,19 +29,17 @@ void FIFO::run_policy()
     pthread_mutex_lock(&queue_mutex);
     while (!xs.empty())
     {
-        //unlock
         pthread_mutex_unlock(&queue_mutex);
-        
+
         /**
          * Get job from job queue
          */
         // continue popping customers until the current time is less than their arrival time + willingness to wait
-        //lock
         pthread_mutex_lock(&queue_mutex);
-        while (!xs.empty() && xs.top().arrival + xs.top().willingness_to_wait <= thread_metrics.time_elapsed)
+        while (!xs.empty() && xs.top().arrival + xs.top().willingness_to_wait <= time)
         {
             cout_lock.lock();
-            std::cout << "Thread " << pthread_self() << ": dropping customer " << xs.top().arrival << " at time " << thread_metrics.time_elapsed << std::endl;
+            std::cout << "Thread " << pthread_self() << ": dropping customer " << xs.top().arrival << " at time " << time << std::endl;
             cout_lock.unlock();
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
@@ -59,22 +57,20 @@ void FIFO::run_policy()
         }
         Customer p = xs.top();
         xs.pop();
-        // cout_lock.lock();
-        // std::cout << "Thread " << pthread_self() << ": beginning customer with revenue " << p.revenue << " at time " << thread_metrics.time_elapsed << std::endl;
-        // std::cout << "After popping, size of job queue is now " << xs.size() << std::endl;
-        // cout_lock.unlock();
         pthread_mutex_unlock(&queue_mutex); // unlock the thread
 
         /**
          * Update metrics
          */
-        if (thread_metrics.time_elapsed < p.arrival)
+        pthread_mutex_lock(&time_mutex);
+        if (time < p.arrival)
         {
-            thread_metrics.time_elapsed = p.arrival;
+            time = p.arrival;
         }
-        p.first_run = thread_metrics.time_elapsed;
-        thread_metrics.time_elapsed += p.duration;
-        p.completion = thread_metrics.time_elapsed;
+        p.first_run = time;
+        time += p.duration;
+        p.completion = time;
+        pthread_mutex_unlock(&time_mutex);
 
         /**
          * Update completed jobs
