@@ -82,16 +82,14 @@ void Lottery::run_policy() {
             // if it is, run the process
             // else, remove the process from the queue
             int random = rand() % ys.size();
-            std::cout << "Random number: " << random << std::endl;
-            std::cout << "Size of ys: " << ys.size() << std::endl;
+            
             pthread_mutex_lock(&time_mutex);
             while (!ys.empty() && ys[random].arrival + ys[random].willingness_to_wait <= time_elapsed)
             {
                 pthread_mutex_unlock(&time_mutex);
                 ys.erase(ys.begin() + random);
-                random = rand() % ys.size();
-                std::cout << "Random number: " << random << std::endl;
-                std::cout << "Size of ys: " << ys.size() << std::endl;
+                if (!ys.empty())
+                    random = rand() % ys.size();
                 pthread_mutex_lock(&time_mutex);
             }
             pthread_mutex_unlock(&time_mutex);
