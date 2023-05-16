@@ -19,9 +19,9 @@ RR::RR(const std::string &filename, const int &num_tables)
 }
 
 // TODO: implement RR scheduling policy
-void RR::run_policy() {
-
-     Metrics thread_metrics;
+void RR::run_policy()
+{
+    Metrics thread_metrics;
 
     pthread_mutex_lock(&mutex);
     std::cout << "Thread " << pthread_self() << ": initialized. Waiting for all threads to be ready." << std::endl;
@@ -29,7 +29,8 @@ void RR::run_policy() {
     pthread_mutex_unlock(&mutex); // unlocking for all other threads
 
     pthread_mutex_lock(&queue_mutex);
-    while (!xs.empty() || !ys.empty()) {
+    while (!xs.empty() || !ys.empty())
+    {
         pthread_mutex_unlock(&queue_mutex); // unlock the thread
 
         pthread_mutex_lock(&queue_mutex);
@@ -54,7 +55,8 @@ void RR::run_policy() {
         }
 
         // add all processes that have arrived
-        while (!xs.empty() && xs.top().arrival <= time) {
+        while (!xs.empty() && xs.top().arrival <= time)
+        {
             Customer p = xs.top();
             ys.push(p);
             xs.pop();
@@ -65,7 +67,8 @@ void RR::run_policy() {
         }
 
         // if there are no processes to run, wait until the next one arrives
-        if (ys.empty()) {
+        if (ys.empty())
+        {
             time = xs.top().arrival;
         }
         // run the next process
@@ -74,18 +77,22 @@ void RR::run_policy() {
         pthread_mutex_unlock(&queue_mutex);
 
         pthread_mutex_lock(&time_mutex);
-        if (p.first_run == -1) {
+        if (p.first_run == -1)
+        {
             p.first_run = time;
         }
         time += 1;
         p.duration -= 1;
-        if (p.duration == 0) {
+        if (p.duration == 0)
+        {
             p.completion = time;
             pthread_mutex_unlock(&time_mutex);
             pthread_mutex_lock(&completed_jobs_mutex);
             completed_jobs.push_back(p);
             pthread_mutex_unlock(&completed_jobs_mutex);
-        } else {
+        }
+        else
+        {
             pthread_mutex_unlock(&time_mutex);
             pthread_mutex_lock(&queue_mutex);
             ys.push(p);
