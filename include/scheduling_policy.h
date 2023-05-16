@@ -14,7 +14,7 @@ class SchedulingPolicy
 public:
     SchedulingPolicy(); // set up job queue and read workload
     ~SchedulingPolicy();
-    virtual void run_policy() = 0;                                 // specific algorithm implementation for each policy
+    virtual void run_policy() = 0; // specific algorithm implementation for each policy
     void print_jobs();
     void print_metrics();
     Metrics get_metrics();
@@ -22,8 +22,8 @@ public:
 protected:
     std::list<Customer> completed_jobs;
     std::vector<std::thread> threads; // vector of threads
-    Metrics metrics;
-    int num_tables;                   // number of threads to run
+    int num_tables; // number of threads to run
+    int time_elapsed;
 
     pthread_mutex_t queue_mutex;
     pthread_mutex_t completed_jobs_mutex;
@@ -33,12 +33,11 @@ protected:
 
     std::mutex cout_lock{};
 
-    int time_elapsed;
-
     void read_workload(const std::string &filename);
     pqueue_arrival get_job_queue() { return job_queue; };
     
 private:
+    Metrics metrics;
     pqueue_arrival job_queue;
     void join_threads();
     void calculate_metrics();

@@ -3,6 +3,9 @@
 #include <fstream>
 #include <string.h>
 
+/**
+ * Constructor for base class. Initializes mutexes and universal time.
+*/
 SchedulingPolicy::SchedulingPolicy() {
     this->queue_mutex = PTHREAD_MUTEX_INITIALIZER;
     this->completed_jobs_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -12,6 +15,9 @@ SchedulingPolicy::SchedulingPolicy() {
     time_elapsed = 0;
 }
 
+/**
+ * Destructor for base class. Destroys mutexes.
+*/
 SchedulingPolicy::~SchedulingPolicy()
 {
     pthread_mutex_destroy(&queue_mutex);
@@ -21,6 +27,9 @@ SchedulingPolicy::~SchedulingPolicy()
     pthread_cond_destroy(&cond);
 }
 
+/**
+ * Prints all jobs that are in the job queue.
+*/
 void SchedulingPolicy::print_jobs()
 {
     pqueue_arrival xs = job_queue;
@@ -38,6 +47,9 @@ void SchedulingPolicy::print_jobs()
     }
 }
 
+/**
+ * Joins all threads.
+*/
 void SchedulingPolicy::join_threads()
 {
     for (auto &t : threads)
@@ -46,10 +58,14 @@ void SchedulingPolicy::join_threads()
     }
 }
 
+/**
+ * Prints statistics.
+*/
 void SchedulingPolicy::print_metrics()
 {
     join_threads();
     calculate_metrics();
+    print_jobs();
     std::cout << "\nMetrics:" << std::endl;
     std::cout << "\tJobs Completed:          " << metrics.total_jobs_completed << "\n"
               << "\tTotal Jobs:              " << metrics.total_jobs << "\n"
@@ -62,6 +78,9 @@ void SchedulingPolicy::print_metrics()
               << "\tTotal time:              " << time_elapsed << "\n\n";
 }
 
+/**
+ * Calculates the metrics.
+*/
 void SchedulingPolicy::calculate_metrics()
 {
     int turnaround = 0;
@@ -90,6 +109,10 @@ void SchedulingPolicy::calculate_metrics()
     metrics.avg_response = (double)response / (double)completed_jobs.size();
 }
 
+/**
+ * Reads in the wordload file.
+ * @param filename: The file name to read in.
+*/
 void SchedulingPolicy::read_workload(const std::string &filename)
 {
     std::ifstream file(filename);
@@ -119,6 +142,9 @@ void SchedulingPolicy::read_workload(const std::string &filename)
     }
 }
 
+/**
+ * Gets metrics.
+*/
 Metrics SchedulingPolicy::get_metrics()
 {
     return metrics;
