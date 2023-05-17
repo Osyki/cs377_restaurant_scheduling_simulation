@@ -18,9 +18,6 @@ FIFO::FIFO(const std::string &filename, const int &num_tables)
         this->threads.emplace_back(&FIFO::run_policy, this);
     }
     sleep(1); // sleep for 1 second to wait for all threads to initialize
-    cout_lock.lock();
-    std::cout << "\n**All threads initialized.. beginning work**\n" << std::endl;
-    cout_lock.unlock();
     pthread_cond_broadcast(&cond); // release the condition to all threads to begin execution
 }
 
@@ -31,13 +28,8 @@ void FIFO::run_policy()
 {
     // Stop thread from executing until all threads have been initialized.
     pthread_mutex_lock(&mutex);
-    std::cout << "Thread " << pthread_self() << ": initialized. Waiting for all threads to be ready." << std::endl;
     pthread_cond_wait(&cond, &mutex);
     pthread_mutex_unlock(&mutex);
-
-    cout_lock.lock();
-    std::cout << "Thread " << pthread_self() << ": Beginning work." << std::endl;
-    cout_lock.unlock();
 
     // Begin scheduling policy.
     pthread_mutex_lock(&queue_mutex);
@@ -55,7 +47,7 @@ void FIFO::run_policy()
         {
             pthread_mutex_unlock(&time_mutex);
             xs.pop();
-            pthread_mutex_unlock(&queue_mutex);\
+            pthread_mutex_unlock(&queue_mutex);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
@@ -83,15 +75,16 @@ void FIFO::run_policy()
             time_elapsed = p.arrival;
         }
         p.first_run = time_elapsed;
-        time_elapsed += p.duration;
-        p.completion = time_elapsed;
+        // Update the time by number of tables
+        time_elapsed += (p.duration % num_tables) ? (p.duration / num_tables) + 1 : (p.duration / num_tables);
+        p.completion = p.first_run + p.duration;
         pthread_mutex_unlock(&time_mutex);
 
         /**
          * Update completed jobs
          */
         pthread_mutex_lock(&completed_jobs_mutex);
-        completed_jobs.push_back(p);
+        completed_jobs.push(p);
         pthread_mutex_unlock(&completed_jobs_mutex);
 
         pthread_mutex_lock(&queue_mutex);

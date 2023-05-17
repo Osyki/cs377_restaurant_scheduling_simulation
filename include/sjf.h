@@ -16,8 +16,6 @@ public:
 private:
     pqueue_arrival xs;  // copy of job queue
     pqueue_duration ys; // duration queue
-    // int table_min;
-    // int table_max;
 };
 
 #endif

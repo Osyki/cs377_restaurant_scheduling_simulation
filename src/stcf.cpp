@@ -19,9 +19,6 @@ STCF::STCF(const std::string &filename, const int &num_tables)
         this->threads.emplace_back(&STCF::run_policy, this);
     }
     sleep(1); // sleep for 1 second to wait for all threads to initialize
-    cout_lock.lock();
-    std::cout << "\n**All threads initialized.. beginning work**\n" << std::endl;
-    cout_lock.unlock();
     pthread_cond_broadcast(&cond); // release the condition to all threads to begin execution
 }
 
@@ -32,13 +29,8 @@ void STCF::run_policy()
 {
     // Stop thread from executing until all threads have been initialized.
     pthread_mutex_lock(&mutex);
-    std::cout << "Thread " << pthread_self() << ": initialized. Waiting for all threads to be ready." << std::endl;
     pthread_cond_wait(&cond, &mutex);
-    pthread_mutex_unlock(&mutex); // unlocking for all other threads
-    
-    cout_lock.lock();
-    std::cout << "Thread " << pthread_self() << ": Beginning work." << std::endl;
-    cout_lock.unlock();
+    pthread_mutex_unlock(&mutex);
 
     // Begin scheduling policy.
     pthread_mutex_lock(&queue_mutex);
@@ -122,7 +114,7 @@ void STCF::run_policy()
                 time_elapsed += 1;
             }
             p.duration -= 1;
-            // If the customer is done, add it to the completed jobs queue
+            // If the process is done, add it to the completed jobs queue
             // Else add it back to the ready queue
             if (p.duration == 0) {
                 /**
@@ -131,7 +123,7 @@ void STCF::run_policy()
                 p.completion = time_elapsed;
                 pthread_mutex_unlock(&time_mutex);
                 pthread_mutex_lock(&completed_jobs_mutex);
-                completed_jobs.push_back(p);
+                completed_jobs.push(p);
                 pthread_mutex_unlock(&completed_jobs_mutex);
             } else {
                 pthread_mutex_unlock(&time_mutex);

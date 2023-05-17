@@ -23,7 +23,7 @@ public:
     Metrics get_metrics();
 
 protected:
-    std::list<Customer> completed_jobs;
+    pqueue_completion completed_jobs; // list of completed jobs
     std::vector<std::thread> threads; // vector of threads
     int num_tables; // number of threads to run
     int time_elapsed;
@@ -34,8 +34,6 @@ protected:
     pthread_mutex_t mutex;
     pthread_cond_t cond;
 
-    std::mutex cout_lock{};
-
     void read_workload(const std::string &filename);
     pqueue_arrival get_job_queue() { return job_queue; };
     
@@ -44,7 +42,7 @@ private:
     pqueue_arrival job_queue;
     void join_threads();
     void calculate_metrics();
-    
+    bool threads_joined;
 };
 
 #endif

@@ -31,13 +31,13 @@ class DurationComparator {
 };
 
 /**
- * Sorts customers by revenue.
+ * Sorts customers by completion time.
 */
-class RevenueComparator {
+class CompletionComparator {
   public:
     bool operator()(const Customer lhs, const Customer rhs) const {
-      if (lhs.revenue != rhs.revenue)
-        return lhs.revenue < rhs.revenue;
+      if (lhs.completion != rhs.completion)
+        return lhs.completion > rhs.completion;
       else
         return lhs.arrival > rhs.arrival;
     }
@@ -47,7 +47,7 @@ typedef std::priority_queue<Customer, std::vector<Customer>, ArrivalComparator>
     pqueue_arrival;
 typedef std::priority_queue<Customer, std::vector<Customer>, DurationComparator>
     pqueue_duration;
-typedef std::priority_queue<Customer, std::vector<Customer>, RevenueComparator>
-    pqueue_revenue;
+typedef std::priority_queue<Customer, std::vector<Customer>, CompletionComparator>
+    pqueue_completion;
 
 #endif

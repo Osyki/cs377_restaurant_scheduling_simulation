@@ -33,14 +33,11 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
     std::cout << "|" << green 
               << " 5. Lottery                                  " 
               << blue << "|" << std::endl;
-    std::cout << "|" << red 
-              << " 6. Multi-Level Feedback Queue (MLFQ)        " 
-              << blue << "|" << std::endl;
-    std::cout << "|" << red 
-              << " 7. All of the above                         " 
+    std::cout << "|" << green 
+              << " 6. All of the above                         " 
               << blue << "|" << std::endl;
     std::cout << "|" << green 
-              << " 8. Quit                                     " 
+              << " 7. Quit                                     " 
               << blue << "|" << std::endl;
     std::cout << " ---------------------------------------------\n"
               << std::endl;
@@ -54,51 +51,80 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
     {
     case 1:
     {
-        std::cout << "FIFO\n"
-                  << std::endl;
+        std::cout << "FIFO\n" << std::endl;
         FIFO fifo(workload_filename, num_tables); // threads start running here
+        fifo.print_jobs();
+        std::cout << green << "\n";
         fifo.print_metrics();
+        std::cout << def;
         break;
     }
     case 2:
     {
-        std::cout << "SJF\n"
-                  << std::endl;
+        std::cout << "SJF\n" << std::endl;
         SJF sjf(workload_filename, num_tables); // threads start running here
+        sjf.print_jobs();
+        std::cout << green << "\n";
         sjf.print_metrics();
+        std::cout << def;
         break;
     }
-    case 3: // STCF
+    case 3:
     {
-        std::cout << "STCF\n"
-                  << std::endl;
+        std::cout << "STCF\n" << std::endl;
         STCF stcf(workload_filename, num_tables); // threads start running here
+        stcf.print_jobs();
+        std::cout << green << "\n";
         stcf.print_metrics();
+        std::cout << def;
         break;
     }
     case 4:
     {
-        std::cout << "RR\n"
-                  << std::endl;
+        std::cout << "RR\n" << std::endl;
         RR rr(workload_filename, num_tables); // threads start running here
+        rr.print_jobs();
+        std::cout << green << "\n";
         rr.print_metrics();
+        std::cout << def;
         break;
     }
     case 5:
     {
-        std::cout << "Lottery\n"
-                  << std::endl;
+        std::cout << "Lottery\n" << std::endl;
         Lottery lottery(workload_filename, num_tables); // threads start running here
+        lottery.print_jobs();
+        std::cout << green << "\n";
         lottery.print_metrics();
+        std::cout << def;
         break;
     }
-    // case 6:
-    //     std::cout<<"MLFQ"<<std::endl;
-    //     // break;
-    // case 7:
-    //     std::cout<<"All of the above"<<std::endl;
-    //     // break;
-    case 8:
+    case 6:
+    {
+        std::cout << "All of the above\n" << std::endl;
+        FIFO fifo(workload_filename, num_tables); // threads start running here
+        std::cout << green << "FIFO ";
+        fifo.print_metrics();
+
+        SJF sjf(workload_filename, num_tables); // threads start running here
+        std::cout << blue << "SJF ";
+        sjf.print_metrics();
+
+        STCF stcf(workload_filename, num_tables); // threads start running here
+        std::cout << green << "STCF ";
+        stcf.print_metrics();
+
+        RR rr(workload_filename, num_tables); // threads start running here
+        std::cout << blue << "RR ";
+        rr.print_metrics();
+
+        Lottery lottery(workload_filename, num_tables); // threads start running here
+        std::cout << green << "Lottery ";
+        lottery.print_metrics();
+        std::cout << def;
+        break;
+    }
+    case 7:
     {
         std::cout << "Quit" << std::endl;
         break;

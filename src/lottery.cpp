@@ -1,41 +1,47 @@
 #include "lottery.h"
 #include <unistd.h>
 
+/**
+ * Reads in a file and sets up thread to call policy.
+ * @param filename: The file to read in.
+ * @param num_tables: The the number of threads to spawn.
+ */
 Lottery::Lottery(const std::string &filename, const int &num_tables)
 {
-    // set random seed to current time
-    srand(time(NULL));
+    // reads in file and sets number of threads
+    srand(time(NULL)); // set random seed to current time
     read_workload(filename);
     this->xs = get_job_queue();
     this->num_tables = num_tables;
     for (int i = 0; i < num_tables; i++)
     {
+        // set each thread to call run_policy
         this->threads.emplace_back(&Lottery::run_policy, this);
     }
     sleep(1); // sleep for 1 second to wait for all threads to initialize
-    cout_lock.lock();
-    std::cout << "\n**All threads initialized.. beginning work**\n"
-              << std::endl;
-    cout_lock.unlock();
-    pthread_cond_broadcast(&cond);
+    pthread_cond_broadcast(&cond); // release the condition to all threads to begin execution
 }
 
-void Lottery::run_policy() {
-    Metrics thread_metrics;
-
+/**
+ * The scheduling policy.
+ */
+void Lottery::run_policy()
+{
+    // Stop thread from executing until all threads have been initialized.
     pthread_mutex_lock(&mutex);
-    std::cout << "Thread " << pthread_self() << ": initialized. Waiting for all threads to be ready." << std::endl;
     pthread_cond_wait(&cond, &mutex);
-    pthread_mutex_unlock(&mutex); // unlocking for all other threads
+    pthread_mutex_unlock(&mutex);
 
-    cout_lock.lock();
-    std::cout << "Thread " << pthread_self() << ": Beginning work." << std::endl;
-    cout_lock.unlock();
-
+    // Begin scheduling policy.
     pthread_mutex_lock(&queue_mutex);
-    while(!xs.empty() || !ys.empty()) {
+    while (!xs.empty() || !ys.empty())
+    {
         pthread_mutex_unlock(&queue_mutex);
 
+        /**
+         * Get job from job queues
+        */
+        // Continue popping customers from job queue until the current time is less than their arrival time + willingness to wait
         pthread_mutex_lock(&queue_mutex);
         pthread_mutex_lock(&time_mutex);
         while (!xs.empty() && xs.top().arrival + xs.top().willingness_to_wait <= time_elapsed)
@@ -43,22 +49,20 @@ void Lottery::run_policy() {
             pthread_mutex_unlock(&time_mutex);
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
-            if (num_tables > 1)
-                sleep(1);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
         pthread_mutex_unlock(&queue_mutex);
         pthread_mutex_unlock(&time_mutex);
 
-        // if the queues are empty after dropping customers, break out of the loop
+        // if the queues are empty after dropping customers, done with policy
         pthread_mutex_lock(&queue_mutex);
         if (xs.empty() && ys.empty())
         {
             break;
         }
 
-        // add all processes that have arrived
+        // Move customers that have arrived to the ready queue
         pthread_mutex_lock(&time_mutex);
         while (!xs.empty() && xs.top().arrival <= time_elapsed)
         {
@@ -67,26 +71,27 @@ void Lottery::run_policy() {
             ys.emplace_back(p);
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
-            if (num_tables > 1)
-                sleep(1);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
         pthread_mutex_unlock(&time_mutex);
 
-        // if there are no processes to run, wait until the next one arrives
+        // if there are no customers to serve, wait until the next one arrives
+        // Else get the next customer from the ready queue
         if (ys.empty())
         {
-            pthread_mutex_unlock(&queue_mutex);
+            // Update the time to the next arrival
             pthread_mutex_lock(&time_mutex);
             time_elapsed = xs.top().arrival;
+            pthread_mutex_unlock(&queue_mutex);
             pthread_mutex_unlock(&time_mutex);
-        } else {
-            // choose a random customer in queue and make sure it's arrival + willingness to wait is less than the current time
-            // if it is, run the process
-            // else, remove the process from the queue
+        }
+        else
+        {
+            // Choose a random customer in queue and make sure it's arrival + willingness to wait is less than the current time
+            // If it is, serve the customer
+            // Else, remove the customer from the queue
             int random = rand() % ys.size();
-            
             pthread_mutex_lock(&time_mutex);
             while (!ys.empty() && ys[random].arrival + ys[random].willingness_to_wait <= time_elapsed)
             {
@@ -98,32 +103,40 @@ void Lottery::run_policy() {
             }
             pthread_mutex_unlock(&time_mutex);
 
-            if (!ys.empty()) {
-                // run the process
+            // If the queue is not empty, serve the customer
+            // Else restart the policy
+            if (!ys.empty())
+            {
+                // Serve the customer
                 Customer p = ys[random];
                 ys.erase(ys.begin() + random);
                 pthread_mutex_unlock(&queue_mutex);
 
+                /**
+                 * Update metrics
+                */
                 pthread_mutex_lock(&time_mutex);
-                if (time_elapsed < p.arrival)
+                if (p.first_run == -1)
                 {
-                    time_elapsed = p.arrival;
+                    p.first_run = time_elapsed;
                 }
-                p.first_run = time_elapsed;
-                time_elapsed += p.duration;
-                p.completion = time_elapsed;
+                // Update the time by number of tables
+                time_elapsed += (p.duration % num_tables) ? (p.duration / num_tables) + 1 : (p.duration / num_tables);
+                p.completion = p.first_run + p.duration;
                 pthread_mutex_unlock(&time_mutex);
 
+                /**
+                 * Update completed jobs
+                */
                 pthread_mutex_lock(&completed_jobs_mutex); // lock the thread
-                completed_jobs.push_back(p);
+                completed_jobs.push(p);
                 pthread_mutex_unlock(&completed_jobs_mutex); // unlock the thread
-            } else {
+            }
+            else
+            {
                 pthread_mutex_unlock(&queue_mutex);
             }
         }
-        
-        if (num_tables > 1)
-            sleep(1);                                    // short sleep to let other threads run
         pthread_mutex_lock(&queue_mutex); // lock the thread
     }
     pthread_mutex_unlock(&queue_mutex);

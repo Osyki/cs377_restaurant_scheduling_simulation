@@ -4,7 +4,7 @@
 #include <string.h>
 
 /**
- * Constructor for base class. Initializes mutexes and universal time.
+ * Constructor for base class. Initializes mutexes, universal time and threads_joined boolean.
 */
 SchedulingPolicy::SchedulingPolicy() {
     this->queue_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -13,6 +13,7 @@ SchedulingPolicy::SchedulingPolicy() {
     this->mutex = PTHREAD_MUTEX_INITIALIZER;
     this->cond = PTHREAD_COND_INITIALIZER;
     time_elapsed = 0;
+    threads_joined = false;
 }
 
 /**
@@ -32,6 +33,8 @@ SchedulingPolicy::~SchedulingPolicy()
 */
 void SchedulingPolicy::print_jobs()
 {
+    if (!threads_joined)
+        join_threads();
     pqueue_arrival xs = job_queue;
     std::cout << "Customers that showed up:" << std::endl;
     while (!xs.empty())
@@ -46,18 +49,18 @@ void SchedulingPolicy::print_jobs()
         xs.pop();
     }
     std::cout << std::endl;
-    std::list<Customer> ys = completed_jobs;
+    pqueue_completion ys = completed_jobs;
     std::cout << "Customers that were helped:" << std::endl;
     while (!ys.empty())
     {
-        Customer p = ys.front();
+        Customer p = ys.top();
         std::cout << "\tarrival=" << p.arrival
                   << ", duration=" << p.duration
                   << ", willingness_to_wait=" << p.willingness_to_wait
                   << ", revenue=" << p.revenue
                   << ", first_run=" << p.first_run
                   << ", completion=" << p.completion << std::endl;
-        ys.pop_front();
+        ys.pop();
     }
 }
 
@@ -70,6 +73,7 @@ void SchedulingPolicy::join_threads()
     {
         t.join();
     }
+    threads_joined = true;
 }
 
 /**
@@ -77,10 +81,10 @@ void SchedulingPolicy::join_threads()
 */
 void SchedulingPolicy::print_metrics()
 {
-    join_threads();
+    if (!threads_joined)
+        join_threads();
     calculate_metrics();
-    print_jobs();
-    std::cout << "\nMetrics:" << std::endl;
+    std::cout << "Metrics:" << std::endl;
     std::cout << "\tJobs Completed:          " << metrics.total_jobs_completed << "\n"
               << "\tTotal Jobs:              " << metrics.total_jobs << "\n"
               << "\tPercent Jobs Completed:  " << (double)metrics.total_jobs_completed / (double)metrics.total_jobs * 100 << "%\n"
@@ -99,16 +103,15 @@ void SchedulingPolicy::calculate_metrics()
 {
     int turnaround = 0;
     int response = 0;
-    std::list<Customer> xs = completed_jobs;
-    std::cout << "\n";
+    pqueue_completion xs = completed_jobs;
     while (!xs.empty())
     {
-        Customer p = xs.front();
-        xs.pop_front();
+        Customer p = xs.top();
+        xs.pop();
         turnaround += p.completion - p.arrival;
         response += p.first_run - p.arrival;
         metrics.revenue_earned += p.revenue;
-        // metrics.time_elapsed = std::max(metrics.time_elapsed, p.completion);
+        time_elapsed = std::max(time_elapsed, p.completion);
     }
     pqueue_arrival ys = job_queue;
     while (!ys.empty())
