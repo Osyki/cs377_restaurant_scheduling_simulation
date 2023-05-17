@@ -28,6 +28,10 @@ void Lottery::run_policy() {
     pthread_cond_wait(&cond, &mutex);
     pthread_mutex_unlock(&mutex); // unlocking for all other threads
 
+    cout_lock.lock();
+    std::cout << "Thread " << pthread_self() << ": Beginning work." << std::endl;
+    cout_lock.unlock();
+
     pthread_mutex_lock(&queue_mutex);
     while(!xs.empty() || !ys.empty()) {
         pthread_mutex_unlock(&queue_mutex);

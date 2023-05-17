@@ -1,6 +1,11 @@
 #include "stcf.h"
 #include <unistd.h>
 
+/**
+ * Reads in a file and sets up thread to call policy.
+ * @param filename: The file to read in.
+ * @param num_tables: The the number of threads to spawn.
+*/
 STCF::STCF(const std::string &filename, const int &num_tables)
 {
     read_workload(filename);
@@ -18,6 +23,9 @@ STCF::STCF(const std::string &filename, const int &num_tables)
     pthread_cond_broadcast(&cond);
 }
 
+/**
+ * The scheduling policy.
+*/
 void STCF::run_policy()
 {
     // Stop thread from executing until all threads have been initialized.
@@ -25,7 +33,10 @@ void STCF::run_policy()
     std::cout << "Thread " << pthread_self() << ": initialized. Waiting for all threads to be ready." << std::endl;
     pthread_cond_wait(&cond, &mutex);
     pthread_mutex_unlock(&mutex); // unlocking for all other threads
+    
+    cout_lock.lock();
     std::cout << "Thread " << pthread_self() << ": Beginning work." << std::endl;
+    cout_lock.unlock();
 
     // Begin scheduling policy.
     pthread_mutex_lock(&queue_mutex);
@@ -80,7 +91,7 @@ void STCF::run_policy()
         }
         pthread_mutex_unlock(&time_mutex);
 
-        // If there are no processes to run, wait until the next one arrives
+        // If there are no customers to run, wait until the next one arrives
         // Else get the next customer from the ready queue
         if (ys.empty())
         {

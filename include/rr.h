@@ -16,6 +16,7 @@ public:
 private:
     pqueue_arrival xs;  // copy of job queue
     std::queue<Customer> ys; // queue of customers who have arrived
+    int table_time;
 };
 
 #endif

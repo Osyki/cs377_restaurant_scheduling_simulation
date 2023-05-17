@@ -29,13 +29,15 @@ SJF::SJF(const std::string &filename, const int &num_tables)
 */
 void SJF::run_policy()
 {
-    // Metrics thread_metrics;
-
     // Stop thread from executing until all threads have been initialized.
     pthread_mutex_lock(&mutex);
     std::cout << "Thread " << pthread_self() << ": initialized. Waiting for all threads to be ready." << std::endl;
     pthread_cond_wait(&cond, &mutex);
     pthread_mutex_unlock(&mutex);
+
+    cout_lock.lock();
+    std::cout << "Thread " << pthread_self() << ": Beginning work." << std::endl;
+    cout_lock.unlock();
 
     // Begin scheduling policy.
     pthread_mutex_lock(&queue_mutex);
@@ -54,8 +56,6 @@ void SJF::run_policy()
             pthread_mutex_unlock(&time_mutex);
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
-            // if (num_tables > 1)
-            //     sleep(1);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
@@ -70,8 +70,6 @@ void SJF::run_policy()
             pthread_mutex_unlock(&time_mutex);
             ys.pop();
             pthread_mutex_unlock(&queue_mutex);
-            // if (num_tables > 1)
-            //     sleep(1);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
@@ -93,8 +91,6 @@ void SJF::run_policy()
             ys.push(xs.top());
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
-            // if (num_tables > 1)
-            //     sleep(1);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
@@ -105,9 +101,9 @@ void SJF::run_policy()
         if (ys.empty())
         {
             // Update the time to the next arrival
-            pthread_mutex_unlock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
             time_elapsed = xs.top().arrival;
+            pthread_mutex_unlock(&queue_mutex);
             pthread_mutex_unlock(&time_mutex);
         } else {
             // Run the next customer
@@ -123,7 +119,8 @@ void SJF::run_policy()
             {
                 p.first_run = time_elapsed;
             }
-            time_elapsed+= p.duration;
+            // Update the time by number of tables
+            time_elapsed += (p.duration % num_tables) ? (p.duration / num_tables) + 1 : (p.duration / num_tables);
             p.completion = time_elapsed;
             pthread_mutex_unlock(&time_mutex);
 
@@ -134,9 +131,6 @@ void SJF::run_policy()
             completed_jobs.push_back(p);
             pthread_mutex_unlock(&completed_jobs_mutex);
         }
-        // Short sleep to let other threads run
-        // if (num_tables > 1)
-        //     sleep(1);  
         pthread_mutex_lock(&queue_mutex);
     }
     pthread_mutex_unlock(&queue_mutex);

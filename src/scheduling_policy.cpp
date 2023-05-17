@@ -33,7 +33,7 @@ SchedulingPolicy::~SchedulingPolicy()
 void SchedulingPolicy::print_jobs()
 {
     pqueue_arrival xs = job_queue;
-    std::cout << "Processes:" << std::endl;
+    std::cout << "Customers that showed up:" << std::endl;
     while (!xs.empty())
     {
         Customer p = xs.top();
@@ -45,9 +45,9 @@ void SchedulingPolicy::print_jobs()
                   << ", completion=" << p.completion << std::endl;
         xs.pop();
     }
-
+    std::cout << std::endl;
     std::list<Customer> ys = completed_jobs;
-    std::cout << "Completed Processes:" << std::endl;
+    std::cout << "Customers that were helped:" << std::endl;
     while (!ys.empty())
     {
         Customer p = ys.front();
