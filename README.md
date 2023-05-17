@@ -28,7 +28,7 @@ After each run, metrics are printed to the console with stats on jobs, average t
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. This program has only been tested on a Linux environment.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. This program has only been tested on a Linux and MacOS environment.
 
 ### Prerequisites
 
