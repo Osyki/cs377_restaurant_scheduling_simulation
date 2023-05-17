@@ -1,6 +1,4 @@
 # Project exclude paths
-/cmake-build-debug/
 /.vscode/
 /build/
 /bin/
-/src/main.cpp.bak
