@@ -24,7 +24,7 @@ If a customer is not helped in time, they will leave the queue causing the resta
 - Round Robin (RR)
 - Lottery (LOT)
 
-After each run, metrics are printed to the console with stats on jobs, average turnaround time, average response time, and revenues. Each algorithm can be run with a different number of tables to see how the number of tables affects the scheduling algorithm. There are options to run the algorithms individually or all currently available algorithms.<br><br>
+After each run, metrics are printed to the console with stats on jobs, average turnaround time, average response time, and revenues. Each algorithm can be run with a different number of tables to see how the number of tables affects the scheduling algorithm. There are options to run the algorithms individually or all currently available algorithms.
 
 ## Getting Started
 
@@ -65,7 +65,6 @@ These instructions will get you a copy of the project up and running on your loc
     ```
     ./bin/restaurant_simulation ./workloads/workload_01.txt 5
     ```
-<br>
 
 ## Running tests
 
@@ -73,12 +72,9 @@ A test executable is generated when running the `make` command above. It runs al
 ```
 ./bin/restaurant_simulation_test
 ```
-<br>
 
 ## Link to Presentation
 - [Presentation](https://google.com)
-
-<br>
 
 ## Authors
 
