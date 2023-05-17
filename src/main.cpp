@@ -49,7 +49,7 @@ void print_menu(const std::string &workload_filename, const int &num_tables)
               << " 4. Round Robin (RR)                         "
               << blue << "|" << std::endl;
     std::cout << "|" << green
-              << " 5. Lottery                                  "
+              << " 5. Lottery (LOT)                            "
               << blue << "|" << std::endl;
     std::cout << "|" << green
               << " 6. All of the above                         "
