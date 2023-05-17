@@ -96,7 +96,7 @@ void SJF::run_policy()
         }
         pthread_mutex_unlock(&time_mutex);
 
-        // If there are no processes to run, wait until the next one arrives
+        // If there are no customers to run, wait until the next one arrives
         // Else get the next customer from the ready queue
         if (ys.empty())
         {

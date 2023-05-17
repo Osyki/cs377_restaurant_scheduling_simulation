@@ -55,9 +55,7 @@ void FIFO::run_policy()
         {
             pthread_mutex_unlock(&time_mutex);
             xs.pop();
-            pthread_mutex_unlock(&queue_mutex);
-            // if (num_tables > 1)
-            //     sleep(1);
+            pthread_mutex_unlock(&queue_mutex);\
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }

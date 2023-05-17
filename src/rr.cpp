@@ -8,12 +8,14 @@
  */
 RR::RR(const std::string &filename, const int &num_tables)
 {
+    // reads in file and sets number of threads
     read_workload(filename);
     this->xs = get_job_queue();
     this->num_tables = num_tables;
     this->table_time = 0;
     for (int i = 0; i < num_tables; i++)
     {
+        // set each thread to call run_policy
         this->threads.emplace_back(&RR::run_policy, this);
     }
     sleep(1); // sleep for 1 second to wait for all threads to initialize
@@ -21,7 +23,7 @@ RR::RR(const std::string &filename, const int &num_tables)
     std::cout << "\n**All threads initialized.. beginning work**\n"
               << std::endl;
     cout_lock.unlock();
-    pthread_cond_broadcast(&cond);
+    pthread_cond_broadcast(&cond); // release the condition to all threads to begin execution
 }
 
 /**
@@ -78,14 +80,12 @@ void RR::run_policy()
             ys.push(p);
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
-            // if (num_tables > 1)
-            //     sleep(1);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
         pthread_mutex_unlock(&time_mutex);
 
-        // If there are no processes to run, wait until the next one arrives
+        // If there are no customers to run, wait until the next one arrives
         // Else get the next customer from the ready queue
         if (ys.empty())
         {

@@ -8,19 +8,21 @@
 */
 STCF::STCF(const std::string &filename, const int &num_tables)
 {
+    // reads in file and sets number of threads
     read_workload(filename);
     this->xs = get_job_queue();
     this->num_tables = num_tables;
     this->table_time = 0;
     for (int i = 0; i < num_tables; i++)
     {
+        // set each thread to call run_policy
         this->threads.emplace_back(&STCF::run_policy, this);
     }
     sleep(1); // sleep for 1 second to wait for all threads to initialize
     cout_lock.lock();
     std::cout << "\n**All threads initialized.. beginning work**\n" << std::endl;
     cout_lock.unlock();
-    pthread_cond_broadcast(&cond);
+    pthread_cond_broadcast(&cond); // release the condition to all threads to begin execution
 }
 
 /**
@@ -120,7 +122,7 @@ void STCF::run_policy()
                 time_elapsed += 1;
             }
             p.duration -= 1;
-            // If the process is done, add it to the completed jobs queue
+            // If the customer is done, add it to the completed jobs queue
             // Else add it back to the ready queue
             if (p.duration == 0) {
                 /**
