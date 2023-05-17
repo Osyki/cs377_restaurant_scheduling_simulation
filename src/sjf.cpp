@@ -29,19 +29,24 @@ SJF::SJF(const std::string &filename, const int &num_tables)
 */
 void SJF::run_policy()
 {
-    Metrics thread_metrics;
+    // Metrics thread_metrics;
 
+    // Stop thread from executing until all threads have been initialized.
     pthread_mutex_lock(&mutex);
     std::cout << "Thread " << pthread_self() << ": initialized. Waiting for all threads to be ready." << std::endl;
     pthread_cond_wait(&cond, &mutex);
-    pthread_mutex_unlock(&mutex); // unlocking for all other threads
+    pthread_mutex_unlock(&mutex);
 
+    // Begin scheduling policy.
     pthread_mutex_lock(&queue_mutex);
     while (!xs.empty() || !ys.empty())
     {
-        pthread_mutex_unlock(&queue_mutex); // unlock the thread
+        pthread_mutex_unlock(&queue_mutex);
 
-        // continue popping customers until the current time is less than their arrival time + willingness to wait
+        /**
+         * Get job from job queues
+        */
+        // Continue popping customers from job queue until the current time is less than their arrival time + willingness to wait
         pthread_mutex_lock(&queue_mutex);
         pthread_mutex_lock(&time_mutex);
         while (!xs.empty() && xs.top().arrival + xs.top().willingness_to_wait <= time_elapsed)
@@ -49,15 +54,15 @@ void SJF::run_policy()
             pthread_mutex_unlock(&time_mutex);
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
-            if (num_tables > 1)
-                sleep(1);
+            // if (num_tables > 1)
+            //     sleep(1);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
         pthread_mutex_unlock(&queue_mutex);
         pthread_mutex_unlock(&time_mutex);
 
-        // continue popping customers until the current time is less than their arrival time + willingness to wait
+        // Continue popping customers from ready queue until the current time is less than their arrival time + willingness to wait
         pthread_mutex_lock(&queue_mutex);
         pthread_mutex_lock(&time_mutex);
         while (!ys.empty() && ys.top().arrival + ys.top().willingness_to_wait <= time_elapsed)
@@ -65,22 +70,22 @@ void SJF::run_policy()
             pthread_mutex_unlock(&time_mutex);
             ys.pop();
             pthread_mutex_unlock(&queue_mutex);
-            if (num_tables > 1)
-                sleep(1);
+            // if (num_tables > 1)
+            //     sleep(1);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
         pthread_mutex_unlock(&queue_mutex);
         pthread_mutex_unlock(&time_mutex);
 
-        // if the queues are empty after dropping customers, break out of the loop
+        // If the queues are empty after dropping customers, done with policy
         pthread_mutex_lock(&queue_mutex);
         if (xs.empty() && ys.empty())
         {
-            // pthread_mutex_unlock(&queue_mutex); // unlock the thread
             break;
         }
 
+        // Move customers that have arrived to the ready queue
         pthread_mutex_lock(&time_mutex);
         while (!xs.empty() && xs.top().arrival <= time_elapsed)
         {
@@ -88,43 +93,52 @@ void SJF::run_policy()
             ys.push(xs.top());
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
-            if (num_tables > 1)
-                sleep(1);
+            // if (num_tables > 1)
+            //     sleep(1);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
         pthread_mutex_unlock(&time_mutex);
-        // if there are no processes to run, wait until the next one arrives
+
+        // If there are no processes to run, wait until the next one arrives
+        // Else get the next customer from the ready queue
         if (ys.empty())
         {
-            pthread_mutex_unlock(&queue_mutex); // unlock the thread
-            pthread_mutex_lock(&time_mutex); // unlock the thread
+            // Update the time to the next arrival
+            pthread_mutex_unlock(&queue_mutex);
+            pthread_mutex_lock(&time_mutex);
             time_elapsed = xs.top().arrival;
-            pthread_mutex_unlock(&time_mutex); // lock the thread
+            pthread_mutex_unlock(&time_mutex);
         } else {
-            // run the shortest process
+            // Run the next customer
             Customer p = ys.top();
             ys.pop();
-            pthread_mutex_unlock(&queue_mutex); // unlock the thread
+            pthread_mutex_unlock(&queue_mutex);
 
-            pthread_mutex_lock(&time_mutex); // lock the thread
+            /**
+             * Update metrics
+            */
+            pthread_mutex_lock(&time_mutex);
             if (p.first_run == -1)
             {
                 p.first_run = time_elapsed;
             }
             time_elapsed+= p.duration;
             p.completion = time_elapsed;
-            pthread_mutex_unlock(&time_mutex); // unlock the thread
+            pthread_mutex_unlock(&time_mutex);
 
+            /**
+             * Update completed jobs
+            */
             pthread_mutex_lock(&completed_jobs_mutex);
             completed_jobs.push_back(p);
             pthread_mutex_unlock(&completed_jobs_mutex);
         }
-        
-        if (num_tables > 1)
-            sleep(1);  
-        pthread_mutex_lock(&queue_mutex); // lock the thread
+        // Short sleep to let other threads run
+        // if (num_tables > 1)
+        //     sleep(1);  
+        pthread_mutex_lock(&queue_mutex);
     }
-    pthread_mutex_unlock(&queue_mutex); // unlock the thread
+    pthread_mutex_unlock(&queue_mutex);
     return;
 }

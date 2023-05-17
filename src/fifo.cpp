@@ -44,7 +44,7 @@ void FIFO::run_policy()
         /**
          * Get job from job queue
          */
-        // continue popping customers until the current time is less than their arrival time + willingness to wait
+        // Continue popping customers until the current time is less than their arrival time + willingness to wait
         pthread_mutex_lock(&queue_mutex);
         pthread_mutex_lock(&time_mutex);
         while (!xs.empty() && xs.top().arrival + xs.top().willingness_to_wait <= time_elapsed)
@@ -60,14 +60,14 @@ void FIFO::run_policy()
         pthread_mutex_unlock(&queue_mutex);
         pthread_mutex_unlock(&time_mutex);
 
-        // if the queue is empty after dropping customers, break out of the loop
+        // If the queue is empty after dropping customers, break out of the loop
         pthread_mutex_lock(&queue_mutex);
         if (xs.empty())
         {
             break;
         }
 
-        // get the next customer
+        // Run the next customer
         Customer p = xs.top();
         xs.pop();
         pthread_mutex_unlock(&queue_mutex);
@@ -92,7 +92,7 @@ void FIFO::run_policy()
         completed_jobs.push_back(p);
         pthread_mutex_unlock(&completed_jobs_mutex);
 
-        // short sleep to let other threads run
+        // Short sleep to let other threads run
         if (num_tables > 1)
             sleep(1);                                    
         pthread_mutex_lock(&queue_mutex);

@@ -6,6 +6,7 @@ STCF::STCF(const std::string &filename, const int &num_tables)
     read_workload(filename);
     this->xs = get_job_queue();
     this->num_tables = num_tables;
+    this->table_time = 0;
     for (int i = 0; i < num_tables; i++)
     {
         this->threads.emplace_back(&STCF::run_policy, this);
@@ -19,18 +20,23 @@ STCF::STCF(const std::string &filename, const int &num_tables)
 
 void STCF::run_policy()
 {
-    Metrics thread_metrics;
-
+    // Stop thread from executing until all threads have been initialized.
     pthread_mutex_lock(&mutex);
     std::cout << "Thread " << pthread_self() << ": initialized. Waiting for all threads to be ready." << std::endl;
     pthread_cond_wait(&cond, &mutex);
     pthread_mutex_unlock(&mutex); // unlocking for all other threads
+    std::cout << "Thread " << pthread_self() << ": Beginning work." << std::endl;
 
+    // Begin scheduling policy.
     pthread_mutex_lock(&queue_mutex);
     while (!xs.empty() || !ys.empty())
     {
-        pthread_mutex_unlock(&queue_mutex); // unlock the thread
+        pthread_mutex_unlock(&queue_mutex);
 
+        /**
+         * Get job from job queues
+        */
+        // Continue popping customers from job queue until the current time is less than their arrival time + willingness to wait
         pthread_mutex_lock(&queue_mutex);
         pthread_mutex_lock(&time_mutex);
         while (!xs.empty() && xs.top().arrival + xs.top().willingness_to_wait <= time_elapsed)
@@ -38,37 +44,30 @@ void STCF::run_policy()
             pthread_mutex_unlock(&time_mutex);
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
-            if (num_tables > 1)
-                sleep(1);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
         pthread_mutex_unlock(&queue_mutex);
         pthread_mutex_unlock(&time_mutex);
 
+        // Continue popping customers from ready queue until the customer's first run is less than their arrival time + willingness to wait
         pthread_mutex_lock(&queue_mutex);
-        pthread_mutex_lock(&time_mutex);
-        while (!ys.empty() && ys.top().arrival + ys.top().willingness_to_wait <= time_elapsed)
+        while (!ys.empty() && ys.top().arrival + ys.top().willingness_to_wait <= ys.top().first_run)
         {
-            pthread_mutex_unlock(&time_mutex);
             ys.pop();
             pthread_mutex_unlock(&queue_mutex);
-            if (num_tables > 1)
-                sleep(1);
             pthread_mutex_lock(&queue_mutex);
-            pthread_mutex_lock(&time_mutex);
         }
         pthread_mutex_unlock(&queue_mutex);
-        pthread_mutex_unlock(&time_mutex);
 
-
-        // if the queues are empty after dropping customers, break out of the loop
+        // If the queues are empty after dropping customers, done with policy
         pthread_mutex_lock(&queue_mutex);
         if (xs.empty() && ys.empty())
         {
             break;
         }
 
+        // Move customer that have arrived to the ready queue
         pthread_mutex_lock(&time_mutex);
         while (!xs.empty() && xs.top().arrival <= time_elapsed)
         {
@@ -76,33 +75,46 @@ void STCF::run_policy()
             ys.push(xs.top());
             xs.pop();
             pthread_mutex_unlock(&queue_mutex);
-            if (num_tables > 1)
-                sleep(1);
             pthread_mutex_lock(&queue_mutex);
             pthread_mutex_lock(&time_mutex);
         }
         pthread_mutex_unlock(&time_mutex);
 
-        // if there are no processes to run, wait until the next one arrives
+        // If there are no processes to run, wait until the next one arrives
+        // Else get the next customer from the ready queue
         if (ys.empty())
         {
-            pthread_mutex_lock(&queue_mutex);
-            pthread_mutex_lock(&time_mutex); // unlock the thread
+            // Update time to the next arrival
+            pthread_mutex_lock(&time_mutex);
             time_elapsed = xs.top().arrival;
+            pthread_mutex_unlock(&queue_mutex);
             pthread_mutex_unlock(&time_mutex);
         } else {
-            // run the shortest process
+            // Run the next customer
             Customer p = ys.top();
             ys.pop();
-            pthread_mutex_unlock(&queue_mutex); // unlock the thread
+            pthread_mutex_unlock(&queue_mutex);
 
+            /**
+             * Update metrics
+            */
             pthread_mutex_lock(&time_mutex);
             if (p.first_run == -1) {
                 p.first_run = time_elapsed;
             }
-            time_elapsed += 1;
+            // Increments universal time only if the all tables have been used
+            table_time += 1;
+            if (table_time >= num_tables) {
+                table_time = 0;
+                time_elapsed += 1;
+            }
             p.duration -= 1;
+            // If the process is done, add it to the completed jobs queue
+            // Else add it back to the ready queue
             if (p.duration == 0) {
+                /**
+                 * Update completed jobs
+                */
                 p.completion = time_elapsed;
                 pthread_mutex_unlock(&time_mutex);
                 pthread_mutex_lock(&completed_jobs_mutex);
@@ -115,11 +127,8 @@ void STCF::run_policy()
                 pthread_mutex_unlock(&queue_mutex);
             } 
         }
-        
-        if (num_tables > 1)
-            sleep(1);  
         pthread_mutex_lock(&queue_mutex);
     }
-    pthread_mutex_unlock(&queue_mutex); // unlock the thread
+    pthread_mutex_unlock(&queue_mutex);
     return;
 }

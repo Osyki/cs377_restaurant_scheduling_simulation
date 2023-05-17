@@ -45,6 +45,20 @@ void SchedulingPolicy::print_jobs()
                   << ", completion=" << p.completion << std::endl;
         xs.pop();
     }
+
+    std::list<Customer> ys = completed_jobs;
+    std::cout << "Completed Processes:" << std::endl;
+    while (!ys.empty())
+    {
+        Customer p = ys.front();
+        std::cout << "\tarrival=" << p.arrival
+                  << ", duration=" << p.duration
+                  << ", willingness_to_wait=" << p.willingness_to_wait
+                  << ", revenue=" << p.revenue
+                  << ", first_run=" << p.first_run
+                  << ", completion=" << p.completion << std::endl;
+        ys.pop_front();
+    }
 }
 
 /**
@@ -110,7 +124,7 @@ void SchedulingPolicy::calculate_metrics()
 }
 
 /**
- * Reads in the wordload file.
+ * Reads in the workload file.
  * @param filename: The file name to read in.
 */
 void SchedulingPolicy::read_workload(const std::string &filename)

@@ -16,6 +16,7 @@ public:
 private:
     pqueue_arrival xs;  // copy of job queue
     pqueue_duration ys; // duration queue
+    int table_time;    // time for a table to complete a job
 };
 
 #endif
