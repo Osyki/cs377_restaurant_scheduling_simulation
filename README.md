@@ -57,7 +57,11 @@ These instructions will get you a copy of the project up and running on your loc
     ```
     make
     ```
-6. Run the program
+6. Move back to the root directory
+    ```
+    cd ..
+    ```
+7. Run the program
     ```
     ./bin/restaurant_simulation <workload file> <num_tables>
     ```
