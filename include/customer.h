@@ -6,8 +6,9 @@
 
 /**
  * Struct to represent a customer.
-*/
-struct Customer {
+ */
+struct Customer
+{
   int arrival;
   int first_run;
   int duration;

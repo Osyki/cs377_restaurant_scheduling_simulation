@@ -5,7 +5,7 @@
  * Reads in a file and sets up thread to call policy.
  * @param filename: The file to read in.
  * @param num_tables: The the number of threads to spawn.
-*/
+ */
 STCF::STCF(const std::string &filename, const int &num_tables)
 {
     // reads in file and sets number of threads
@@ -18,13 +18,13 @@ STCF::STCF(const std::string &filename, const int &num_tables)
         // set each thread to call run_policy
         this->threads.emplace_back(&STCF::run_policy, this);
     }
-    sleep(1); // sleep for 1 second to wait for all threads to initialize
+    sleep(1);                      // sleep for 1 second to wait for all threads to initialize
     pthread_cond_broadcast(&cond); // release the condition to all threads to begin execution
 }
 
 /**
  * The scheduling policy.
-*/
+ */
 void STCF::run_policy()
 {
     // Stop thread from executing until all threads have been initialized.
@@ -40,7 +40,7 @@ void STCF::run_policy()
 
         /**
          * Get job from job queues
-        */
+         */
         // Continue popping customers from job queue until the current time is less than their arrival time + willingness to wait
         pthread_mutex_lock(&queue_mutex);
         pthread_mutex_lock(&time_mutex);
@@ -94,7 +94,9 @@ void STCF::run_policy()
             time_elapsed = xs.top().arrival;
             pthread_mutex_unlock(&queue_mutex);
             pthread_mutex_unlock(&time_mutex);
-        } else {
+        }
+        else
+        {
             // Run the next customer
             Customer p = ys.top();
             ys.pop();
@@ -102,35 +104,40 @@ void STCF::run_policy()
 
             /**
              * Update metrics
-            */
+             */
             pthread_mutex_lock(&time_mutex);
-            if (p.first_run == -1) {
+            if (p.first_run == -1)
+            {
                 p.first_run = time_elapsed;
             }
             // Increments universal time only if the all tables have been used
             table_time += 1;
-            if (table_time >= num_tables) {
+            if (table_time >= num_tables)
+            {
                 table_time = 0;
                 time_elapsed += 1;
             }
             p.duration -= 1;
             // If the process is done, add it to the completed jobs queue
             // Else add it back to the ready queue
-            if (p.duration == 0) {
+            if (p.duration == 0)
+            {
                 /**
                  * Update completed jobs
-                */
+                 */
                 p.completion = time_elapsed;
                 pthread_mutex_unlock(&time_mutex);
                 pthread_mutex_lock(&completed_jobs_mutex);
                 completed_jobs.push(p);
                 pthread_mutex_unlock(&completed_jobs_mutex);
-            } else {
+            }
+            else
+            {
                 pthread_mutex_unlock(&time_mutex);
                 pthread_mutex_lock(&queue_mutex);
                 ys.push(p);
                 pthread_mutex_unlock(&queue_mutex);
-            } 
+            }
         }
         pthread_mutex_lock(&queue_mutex);
     }

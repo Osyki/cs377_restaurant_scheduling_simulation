@@ -5,7 +5,7 @@
  * Reads in a file and sets up thread to call policy.
  * @param filename: The file to read in.
  * @param num_tables: The the number of threads to spawn.
-*/
+ */
 SJF::SJF(const std::string &filename, const int &num_tables)
 {
     // reads in file and sets number of threads
@@ -17,13 +17,13 @@ SJF::SJF(const std::string &filename, const int &num_tables)
         // set each thread to call run_policy
         this->threads.emplace_back(&SJF::run_policy, this);
     }
-    sleep(1); // sleep for 1 second to wait for all threads to initialize
+    sleep(1);                      // sleep for 1 second to wait for all threads to initialize
     pthread_cond_broadcast(&cond); // release the condition to all threads to begin execution
 }
 
 /**
  * The scheduling policy.
-*/
+ */
 void SJF::run_policy()
 {
     // Stop thread from executing until all threads have been initialized.
@@ -39,7 +39,7 @@ void SJF::run_policy()
 
         /**
          * Get job from job queues
-        */
+         */
         // Continue popping customers from job queue until the current time is less than their arrival time + willingness to wait
         pthread_mutex_lock(&queue_mutex);
         pthread_mutex_lock(&time_mutex);
@@ -97,7 +97,9 @@ void SJF::run_policy()
             time_elapsed = xs.top().arrival;
             pthread_mutex_unlock(&queue_mutex);
             pthread_mutex_unlock(&time_mutex);
-        } else {
+        }
+        else
+        {
             // Run the next customer
             Customer p = ys.top();
             ys.pop();
@@ -105,7 +107,7 @@ void SJF::run_policy()
 
             /**
              * Update metrics
-            */
+             */
             pthread_mutex_lock(&time_mutex);
             if (p.first_run == -1)
             {
@@ -118,7 +120,7 @@ void SJF::run_policy()
 
             /**
              * Update completed jobs
-            */
+             */
             pthread_mutex_lock(&completed_jobs_mutex);
             completed_jobs.push(p);
             pthread_mutex_unlock(&completed_jobs_mutex);

@@ -5,7 +5,7 @@
  * Reads in a file and sets up thread to call policy.
  * @param filename: The file to read in.
  * @param num_tables: The the number of threads to spawn.
-*/
+ */
 FIFO::FIFO(const std::string &filename, const int &num_tables)
 {
     // reads in file and sets number of threads
@@ -17,13 +17,13 @@ FIFO::FIFO(const std::string &filename, const int &num_tables)
         // set each thread to call run_policy
         this->threads.emplace_back(&FIFO::run_policy, this);
     }
-    sleep(1); // sleep for 1 second to wait for all threads to initialize
+    sleep(1);                      // sleep for 1 second to wait for all threads to initialize
     pthread_cond_broadcast(&cond); // release the condition to all threads to begin execution
 }
 
 /**
  * The scheduling policy.
-*/
+ */
 void FIFO::run_policy()
 {
     // Stop thread from executing until all threads have been initialized.

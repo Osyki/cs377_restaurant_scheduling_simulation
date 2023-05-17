@@ -18,7 +18,7 @@ Lottery::Lottery(const std::string &filename, const int &num_tables)
         // set each thread to call run_policy
         this->threads.emplace_back(&Lottery::run_policy, this);
     }
-    sleep(1); // sleep for 1 second to wait for all threads to initialize
+    sleep(1);                      // sleep for 1 second to wait for all threads to initialize
     pthread_cond_broadcast(&cond); // release the condition to all threads to begin execution
 }
 
@@ -40,7 +40,7 @@ void Lottery::run_policy()
 
         /**
          * Get job from job queues
-        */
+         */
         // Continue popping customers from job queue until the current time is less than their arrival time + willingness to wait
         pthread_mutex_lock(&queue_mutex);
         pthread_mutex_lock(&time_mutex);
@@ -114,7 +114,7 @@ void Lottery::run_policy()
 
                 /**
                  * Update metrics
-                */
+                 */
                 pthread_mutex_lock(&time_mutex);
                 if (p.first_run == -1)
                 {
@@ -127,7 +127,7 @@ void Lottery::run_policy()
 
                 /**
                  * Update completed jobs
-                */
+                 */
                 pthread_mutex_lock(&completed_jobs_mutex); // lock the thread
                 completed_jobs.push(p);
                 pthread_mutex_unlock(&completed_jobs_mutex); // unlock the thread

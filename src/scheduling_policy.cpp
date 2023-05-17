@@ -5,8 +5,9 @@
 
 /**
  * Constructor for base class. Initializes mutexes, universal time and threads_joined boolean.
-*/
-SchedulingPolicy::SchedulingPolicy() {
+ */
+SchedulingPolicy::SchedulingPolicy()
+{
     this->queue_mutex = PTHREAD_MUTEX_INITIALIZER;
     this->completed_jobs_mutex = PTHREAD_MUTEX_INITIALIZER;
     this->time_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -18,7 +19,7 @@ SchedulingPolicy::SchedulingPolicy() {
 
 /**
  * Destructor for base class. Destroys mutexes.
-*/
+ */
 SchedulingPolicy::~SchedulingPolicy()
 {
     pthread_mutex_destroy(&queue_mutex);
@@ -30,7 +31,7 @@ SchedulingPolicy::~SchedulingPolicy()
 
 /**
  * Prints all jobs that are in the job queue.
-*/
+ */
 void SchedulingPolicy::print_jobs()
 {
     if (!threads_joined)
@@ -66,7 +67,7 @@ void SchedulingPolicy::print_jobs()
 
 /**
  * Joins all threads.
-*/
+ */
 void SchedulingPolicy::join_threads()
 {
     for (auto &t : threads)
@@ -78,7 +79,7 @@ void SchedulingPolicy::join_threads()
 
 /**
  * Prints statistics.
-*/
+ */
 void SchedulingPolicy::print_metrics()
 {
     if (!threads_joined)
@@ -98,7 +99,7 @@ void SchedulingPolicy::print_metrics()
 
 /**
  * Calculates the metrics.
-*/
+ */
 void SchedulingPolicy::calculate_metrics()
 {
     int turnaround = 0;
@@ -129,7 +130,7 @@ void SchedulingPolicy::calculate_metrics()
 /**
  * Reads in the workload file.
  * @param filename: The file name to read in.
-*/
+ */
 void SchedulingPolicy::read_workload(const std::string &filename)
 {
     std::ifstream file(filename);
@@ -161,7 +162,7 @@ void SchedulingPolicy::read_workload(const std::string &filename)
 
 /**
  * Gets metrics.
-*/
+ */
 Metrics SchedulingPolicy::get_metrics()
 {
     return metrics;

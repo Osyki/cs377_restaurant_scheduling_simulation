@@ -9,7 +9,8 @@
 
 using namespace std;
 
-TEST(HomeworkTest, FIFO_workload01) {
+TEST(HomeworkTest, FIFO_workload01)
+{
   FIFO fifo("workloads/workload_01.txt", 1);
   fifo.print_metrics();
   Metrics metrics = fifo.get_metrics();
@@ -17,7 +18,8 @@ TEST(HomeworkTest, FIFO_workload01) {
   EXPECT_EQ(metrics.avg_response, 10);
 }
 
-TEST(HomeworkTest, FIFO_workload02) {
+TEST(HomeworkTest, FIFO_workload02)
+{
   FIFO fifo("workloads/workload_02.txt", 1);
   fifo.print_metrics();
   Metrics metrics = fifo.get_metrics();
@@ -25,7 +27,8 @@ TEST(HomeworkTest, FIFO_workload02) {
   EXPECT_EQ(metrics.avg_response, 10);
 }
 
-TEST(HomeworkTest, FIFO_workload03) {
+TEST(HomeworkTest, FIFO_workload03)
+{
   FIFO fifo("workloads/workload_03.txt", 1);
   fifo.print_metrics();
   Metrics metrics = fifo.get_metrics();
@@ -33,7 +36,8 @@ TEST(HomeworkTest, FIFO_workload03) {
   EXPECT_NEAR(metrics.avg_turnaround, 103.3, 0.1);
 }
 
-TEST(HomeworkTest, FIFO_workload04) {
+TEST(HomeworkTest, FIFO_workload04)
+{
   FIFO fifo("workloads/workload_04.txt", 1);
   fifo.print_metrics();
   Metrics metrics = fifo.get_metrics();
@@ -41,7 +45,8 @@ TEST(HomeworkTest, FIFO_workload04) {
   EXPECT_EQ(metrics.avg_response, 5);
 }
 
-TEST(HomeworkTest, SJF_workload01) {
+TEST(HomeworkTest, SJF_workload01)
+{
   SJF sjf("workloads/workload_01.txt", 1);
   sjf.print_metrics();
   Metrics metrics = sjf.get_metrics();
@@ -49,7 +54,8 @@ TEST(HomeworkTest, SJF_workload01) {
   EXPECT_EQ(metrics.avg_response, 10);
 }
 
-TEST(HomeworkTest, SJF_workload02) {
+TEST(HomeworkTest, SJF_workload02)
+{
   SJF sjf("workloads/workload_02.txt", 1);
   sjf.print_metrics();
   Metrics metrics = sjf.get_metrics();
@@ -57,7 +63,8 @@ TEST(HomeworkTest, SJF_workload02) {
   EXPECT_EQ(metrics.avg_response, 10);
 }
 
-TEST(HomeworkTest, SJF_workload03) {
+TEST(HomeworkTest, SJF_workload03)
+{
   SJF sjf("workloads/workload_03.txt", 1);
   sjf.print_metrics();
   Metrics metrics = sjf.get_metrics();
@@ -65,7 +72,8 @@ TEST(HomeworkTest, SJF_workload03) {
   EXPECT_NEAR(metrics.avg_response, 63.3, 0.1);
 }
 
-TEST(HomeworkTest, SJF_workload04) {
+TEST(HomeworkTest, SJF_workload04)
+{
   SJF sjf("workloads/workload_04.txt", 1);
   sjf.print_metrics();
   Metrics metrics = sjf.get_metrics();
@@ -73,7 +81,8 @@ TEST(HomeworkTest, SJF_workload04) {
   EXPECT_EQ(metrics.avg_response, 5);
 }
 
-TEST(HomeworkTest, STCF_workload01) {
+TEST(HomeworkTest, STCF_workload01)
+{
   STCF stcf("workloads/workload_01.txt", 1);
   stcf.print_metrics();
   Metrics metrics = stcf.get_metrics();
@@ -81,7 +90,8 @@ TEST(HomeworkTest, STCF_workload01) {
   EXPECT_EQ(metrics.avg_response, 10);
 }
 
-TEST(HomeworkTest, STCF_workload02) {
+TEST(HomeworkTest, STCF_workload02)
+{
   STCF stcf("workloads/workload_02.txt", 1);
   stcf.print_metrics();
   Metrics metrics = stcf.get_metrics();
@@ -89,7 +99,8 @@ TEST(HomeworkTest, STCF_workload02) {
   EXPECT_EQ(metrics.avg_response, 10);
 }
 
-TEST(HomeworkTest, STCF_workload03) {
+TEST(HomeworkTest, STCF_workload03)
+{
   STCF stcf("workloads/workload_03.txt", 1);
   stcf.print_metrics();
   Metrics metrics = stcf.get_metrics();
@@ -97,7 +108,8 @@ TEST(HomeworkTest, STCF_workload03) {
   EXPECT_NEAR(metrics.avg_response, 3.3, 0.1);
 }
 
-TEST(HomeworkTest, STCF_workload04) {
+TEST(HomeworkTest, STCF_workload04)
+{
   STCF stcf("workloads/workload_04.txt", 1);
   stcf.print_metrics();
   Metrics metrics = stcf.get_metrics();
@@ -105,7 +117,8 @@ TEST(HomeworkTest, STCF_workload04) {
   EXPECT_EQ(metrics.avg_response, 5);
 }
 
-TEST(HomeworkTest, RR_workload01) {
+TEST(HomeworkTest, RR_workload01)
+{
   RR rr("workloads/workload_01.txt", 1);
   rr.print_metrics();
   Metrics metrics = rr.get_metrics();
@@ -113,7 +126,8 @@ TEST(HomeworkTest, RR_workload01) {
   EXPECT_EQ(metrics.avg_response, 1);
 }
 
-TEST(HomeworkTest, RR_workload02) {
+TEST(HomeworkTest, RR_workload02)
+{
   RR rr("workloads/workload_02.txt", 1);
   rr.print_metrics();
   Metrics metrics = rr.get_metrics();
@@ -121,7 +135,8 @@ TEST(HomeworkTest, RR_workload02) {
   EXPECT_EQ(metrics.avg_response, 1);
 }
 
-TEST(HomeworkTest, RR_workload03) {
+TEST(HomeworkTest, RR_workload03)
+{
   RR rr("workloads/workload_03.txt", 1);
   rr.print_metrics();
   Metrics metrics = rr.get_metrics();
@@ -129,7 +144,8 @@ TEST(HomeworkTest, RR_workload03) {
   EXPECT_EQ(metrics.avg_response, 1);
 }
 
-TEST(HomeworkTest, RR_workload04) {
+TEST(HomeworkTest, RR_workload04)
+{
   RR rr("workloads/workload_04.txt", 1);
   rr.print_metrics();
   Metrics metrics = rr.get_metrics();
@@ -137,8 +153,8 @@ TEST(HomeworkTest, RR_workload04) {
   EXPECT_EQ(metrics.avg_response, 1);
 }
 
-
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

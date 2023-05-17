@@ -6,10 +6,12 @@
 
 /**
  * Sorts customers by arrival time.
-*/
-class ArrivalComparator {
- public:
-  bool operator()(const Customer lhs, const Customer rhs) const {
+ */
+class ArrivalComparator
+{
+public:
+  bool operator()(const Customer lhs, const Customer rhs) const
+  {
     if (lhs.arrival != rhs.arrival)
       return lhs.arrival > rhs.arrival;
     else
@@ -19,10 +21,12 @@ class ArrivalComparator {
 
 /**
  * Sorts customers by duration.
-*/
-class DurationComparator {
- public:
-  bool operator()(const Customer lhs, const Customer rhs) const {
+ */
+class DurationComparator
+{
+public:
+  bool operator()(const Customer lhs, const Customer rhs) const
+  {
     if (lhs.duration != rhs.duration)
       return lhs.duration > rhs.duration;
     else
@@ -32,15 +36,17 @@ class DurationComparator {
 
 /**
  * Sorts customers by completion time.
-*/
-class CompletionComparator {
-  public:
-    bool operator()(const Customer lhs, const Customer rhs) const {
-      if (lhs.completion != rhs.completion)
-        return lhs.completion > rhs.completion;
-      else
-        return lhs.arrival > rhs.arrival;
-    }
+ */
+class CompletionComparator
+{
+public:
+  bool operator()(const Customer lhs, const Customer rhs) const
+  {
+    if (lhs.completion != rhs.completion)
+      return lhs.completion > rhs.completion;
+    else
+      return lhs.arrival > rhs.arrival;
+  }
 };
 
 typedef std::priority_queue<Customer, std::vector<Customer>, ArrivalComparator>

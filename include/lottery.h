@@ -5,7 +5,7 @@
 
 /**
  * Lottery scheduling policy.
-*/
+ */
 class Lottery : public SchedulingPolicy
 {
 public:
@@ -14,7 +14,7 @@ public:
     void run_policy();
 
 private:
-    pqueue_arrival xs;  // copy of job queue
+    pqueue_arrival xs;        // copy of job queue
     std::vector<Customer> ys; // vector of customers who have arrived
 };
 

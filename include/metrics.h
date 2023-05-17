@@ -3,8 +3,9 @@
 
 /**
  * Struct to represent metrics.
-*/
-struct Metrics {
+ */
+struct Metrics
+{
     int revenue_earned = 0;
     int total_revenue = 0;
     int total_jobs = 0;

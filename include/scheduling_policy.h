@@ -25,7 +25,7 @@ public:
 protected:
     pqueue_completion completed_jobs; // list of completed jobs
     std::vector<std::thread> threads; // vector of threads
-    int num_tables; // number of threads to run
+    int num_tables;                   // number of threads to run
     int time_elapsed;
 
     pthread_mutex_t queue_mutex;
@@ -36,7 +36,7 @@ protected:
 
     void read_workload(const std::string &filename);
     pqueue_arrival get_job_queue() { return job_queue; };
-    
+
 private:
     Metrics metrics;
     pqueue_arrival job_queue;

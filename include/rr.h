@@ -14,7 +14,7 @@ public:
     void run_policy();
 
 private:
-    pqueue_arrival xs;  // copy of job queue
+    pqueue_arrival xs;       // copy of job queue
     std::queue<Customer> ys; // queue of customers who have arrived
     int table_time;
 };

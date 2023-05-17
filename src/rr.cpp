@@ -18,7 +18,7 @@ RR::RR(const std::string &filename, const int &num_tables)
         // set each thread to call run_policy
         this->threads.emplace_back(&RR::run_policy, this);
     }
-    sleep(1); // sleep for 1 second to wait for all threads to initialize
+    sleep(1);                      // sleep for 1 second to wait for all threads to initialize
     pthread_cond_broadcast(&cond); // release the condition to all threads to begin execution
 }
 
@@ -94,7 +94,7 @@ void RR::run_policy()
 
             /**
              * Update metrics
-            */
+             */
             pthread_mutex_lock(&time_mutex);
             if (p.first_run == -1)
             {
@@ -102,7 +102,8 @@ void RR::run_policy()
             }
             // Increments universal time only if the all tables have been used
             table_time += 1;
-            if (table_time >= num_tables) {
+            if (table_time >= num_tables)
+            {
                 table_time = 0;
                 time_elapsed += 1;
             }
@@ -113,7 +114,7 @@ void RR::run_policy()
             {
                 /**
                  * Update completed jobs
-                */
+                 */
                 p.completion = time_elapsed;
                 pthread_mutex_unlock(&time_mutex);
                 pthread_mutex_lock(&completed_jobs_mutex);
