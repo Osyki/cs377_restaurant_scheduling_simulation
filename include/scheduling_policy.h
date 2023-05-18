@@ -26,8 +26,11 @@ protected:
     pqueue_completion completed_jobs; // list of completed jobs
     std::vector<std::thread> threads; // vector of threads
     int num_tables;                   // number of threads to run
-    int time_elapsed;
+    int time_elapsed;                 // universal time elapsed in seconds
 
+    /**
+     * Mutexes and condition variables for threads.
+    */
     pthread_mutex_t queue_mutex;
     pthread_mutex_t completed_jobs_mutex;
     pthread_mutex_t time_mutex;
@@ -38,10 +41,10 @@ protected:
     pqueue_arrival get_job_queue() { return job_queue; };
 
 private:
-    Metrics metrics;
-    pqueue_arrival job_queue;
-    void join_threads();
+    pqueue_arrival job_queue; // list of jobs to be completed
+    Metrics metrics; // metrics for the scheduling policy
     void calculate_metrics();
+    void join_threads();
     bool threads_joined;
 };
 
