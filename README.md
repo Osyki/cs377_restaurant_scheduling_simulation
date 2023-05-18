@@ -41,27 +41,31 @@ These instructions will get you a copy of the project up and running on your loc
     ```
     git clone https://github.com/Osyki/cs377_restaurant_scheduling_simulation
     ```
-2. Create a build directory
+2. Change to the root directory
+    ```
+    cd cs377_restaurant_scheduling_simulation
+    ```
+3. Create a build directory
     ```
     mkdir build
     ```
-3. Change to the build directory
+4. Change to the build directory
     ```
     cd build
     ```
-4. Run CMake
+5. Run CMake
     ```
     cmake ..
     ```
-5. Build the project
+6. Build the project
     ```
     make
     ```
-6. Move back to the root directory
+7. Move back to the root directory
     ```
     cd ..
     ```
-7. Run the program
+8. Run the program
     ```
     ./bin/restaurant_simulation <workload file> <num_tables>
     ```
