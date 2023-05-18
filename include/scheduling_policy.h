@@ -30,7 +30,7 @@ protected:
 
     /**
      * Mutexes and condition variables for threads.
-    */
+     */
     pthread_mutex_t queue_mutex;
     pthread_mutex_t completed_jobs_mutex;
     pthread_mutex_t time_mutex;
@@ -42,7 +42,7 @@ protected:
 
 private:
     pqueue_arrival job_queue; // list of jobs to be completed
-    Metrics metrics; // metrics for the scheduling policy
+    Metrics metrics;          // metrics for the scheduling policy
     void calculate_metrics();
     void join_threads();
     bool threads_joined;
