@@ -82,7 +82,7 @@ A test executable is generated when running the `make` command above. It runs al
 ```
 
 ## Link to Presentation
-- [Presentation](https://www.youtube.com/watch?v=v1r6in8FKbY)
+- [Presentation](https://drive.google.com/file/d/1ydItS5-WOesx22maV8B99uFXRd3cumX9/view)
 
 ## Authors
 
